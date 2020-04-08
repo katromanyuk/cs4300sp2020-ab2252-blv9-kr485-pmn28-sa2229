@@ -3,8 +3,8 @@ from app.irsystem.models.helpers import *
 from app.irsystem.models.helpers import NumpyEncoder as NumpyEncoder
 
 project_name = "Clever Monkeys: TV Show Recommendations Based on Streaming Service(s)"
-net_id = "Amber Baez (ab2252), Betsy Vasquez Valerio (blv9), " \
-"Kateryna Romanyuk (kr485), Patrick Neafsey (pmn28), Shilpy Agarwal (sa2229)"
+net_id = "Amber Baez: ab2252, Betsy Vasquez Valerio: blv9, " \
+"Kateryna Romanyuk: kr485, Patrick Neafsey: pmn28, Shilpy Agarwal: sa2229"
 
 @irsystem.route('/', methods=['GET'])
 def search():
