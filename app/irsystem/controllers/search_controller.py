@@ -1,5 +1,6 @@
 from . import *
 from app.irsystem.models.helpers import *
+from app.irsystem.models.search import *
 from app.irsystem.models.helpers import NumpyEncoder as NumpyEncoder
 import lyricsgenius
 
@@ -23,6 +24,6 @@ def search():
 		result = genius.search_song(query[0], query[1])
 		song = result.title
 		artist = result.artist
-		output_message = "Song: " + song + "\nArtist: " + artist
+		output_message = "Song: " + song + "\n\nArtist: " + artist
 		data = result.lyrics
 	return render_template('search.html', name=project_name, netid=net_id, output_message=output_message, data=data)
