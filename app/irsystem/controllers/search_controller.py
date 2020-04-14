@@ -1,8 +1,14 @@
 from . import *
 from app.irsystem.models.helpers import *
 from app.irsystem.models.helpers import NumpyEncoder as NumpyEncoder
+import lyricsgenius
 
-project_name = "Clever Monkeys: TV Show Recommendations Based on Streaming Service(s)"
+TOKEN = 'sD0C3epnJdfOQQK4eIC45dHl-Qv7DipToGpuj1n4WeuG5_LDP1HKn31w5Cn1lOux'
+genius = lyricsgenius.Genius(TOKEN)
+genius.verbose = False
+genius.remove_section_headers = True
+
+project_name = "Clever Monkeys: Movie Recommendations Based on Music Preferences"
 net_id = "Amber Baez: ab2252, Betsy Vasquez Valerio: blv9, " \
 "Kateryna Romanyuk: kr485, Patrick Neafsey: pmn28, Shilpy Agarwal: sa2229"
 
@@ -13,6 +19,10 @@ def search():
 		data = []
 		output_message = ''
 	else:
-		output_message = "Your search: " + query
-		data = range(5)
+		query = query.split(',')
+		result = genius.search_song(query[0], query[1])
+		song = result.title
+		artist = result.artist
+		output_message = "Song: " + song + "\nArtist: " + artist
+		data = result.lyrics
 	return render_template('search.html', name=project_name, netid=net_id, output_message=output_message, data=data)
