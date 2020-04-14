@@ -10,15 +10,15 @@ genius.remove_section_headers = True
 
 def find_music(query):
     output = []
-    if query.index(',')==-1:
+    if ',' in query:
+        query = query.split(',')
+        result = genius.search_song(query[0], query[1])
+        output.append('Song: '+result.title)
+        output.append('Artist: '+result.artist)
+    else:
         result = genius.search_artist(query, max_songs=5)
         output.append('Artist: '+result.name)
         output.append('Top songs:')
         for song in result.songs:
             output.append(song.title)
-    else:
-        query = query.split(',')
-        result = genius.search_song(query[0], query[1])
-        output.append('Song: '+result.title)
-        output.append('Artist: '+result.artist)
     return output
