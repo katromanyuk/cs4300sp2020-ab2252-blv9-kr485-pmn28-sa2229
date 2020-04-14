@@ -14,11 +14,13 @@ def find_music(query):
         query = query.split(',')
         result = genius.search_song(query[0], query[1])
         output.append('Song: '+result.title)
-        output.append('Artist: '+result.artist)
+        output.append('\nArtist: '+result.artist)
     else:
         result = genius.search_artist(query, max_songs=5)
         output.append('Artist: '+result.name)
         output.append('Top songs:')
+        i = 1
         for song in result.songs:
-            output.append(song.title)
+            output.append(str(i)+'. '+song.title)
+            i+=1
     return output
