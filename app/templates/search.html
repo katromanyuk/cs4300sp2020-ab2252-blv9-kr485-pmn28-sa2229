@@ -1,41 +1,50 @@
 <html>
-    <head>
-        <link rel="stylesheet" href="/static/bootstrap.min.css">
-        <link rel="stylesheet" href="/static/main.css">
-    </head>
-    <body>
-        <div class="topcorner">
-            <p>Project Name: {{ name }}</p>
-            <p>Student Names: ({{ netid }})</p>
+
+<head>
+    <link rel="stylesheet" href="/static/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+
+<body>
+    <div class="topcorner">
+        <p>Project Name: {{ name }}</p>
+        <p>Student Names: ({{ netid }})</p>
+    </div>
+    <form class="form-inline global-search">
+        <h1 style="font-size: 55px; font-family:Futura; color: #1DB954">
+            Melodic
+            <span style="color: #191414; ">Monkeys</span>
+            <span style="color: #1DB954; ">Movies</span>
+        </h1>
+
+        <br><br>
+
+        <div class="form-group">
+            <input id="input" type="text" name="search1" class="form-control"
+                placeholder="What song are you listening to right now? ">
         </div>
-        <form class="form-inline global-search">
-            <h1 style="font-size: 55px; font-family:Futura; color: #1DB954">
-                Melodic
-                <span style="color: #191414; ">Monkeys</span>
-                <span style="color: #1DB954; ">Movies</span>
-            </h1>
 
-            <br><br>
+        <div class="form-group">
+            <input id="input" type="text" name="search3" class="form-control"
+                placeholder="What artist are you liking right now? ">
+        </div>
 
-            <div class="form-group">
-                <input id="input" type="text" name="search1" class="form-control" placeholder="Enter 'song, artist' or 'artist' ">
-            </div>
-            <button type="submit" class="btn btn-info"> Go! </button>
+        <div class="form-group">
+            <input id="input" type="text" name="search2" class="form-control"
+                placeholder="Name a movie you liked and feel like rewatching.">
+        </div>
+        <button type="submit" class="btn btn-info"> Go! </button>
 
-            <div class="form-group">
-                <input id="input" type="text" name="search2" class="form-control" placeholder="Enter movie name ">
-            </div>
-            <button type="submit" class="btn btn-info"> Go! </button>
-        </form>
-        <form class="form-inline global-search">
+    </form>
+    <form class="form-inline global-search">
         {% if data %}
-            <h1>{{output_message}}</h1>
-            {% for d in data %}  
-                <br>
-                <p>{{d}}</p>
-            {% endfor %}
+        <h1>{{output_message}}</h1>
+        {% for d in data %}
+        <br>
+        <p>{{d}}</p>
+        {% endfor %}
         {% endif %}
-        </form>
-    </body>
+    </form>
+</body>
 
 </html>
