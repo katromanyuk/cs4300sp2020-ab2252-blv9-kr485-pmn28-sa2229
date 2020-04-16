@@ -24,11 +24,11 @@ def find_music(query):
         output.append('Artist: '+result.name)
         output.append('----------------')
         output.append('Top songs:')
-        output.append('----------------')
         i = 1
         for song in result.songs:
             output.append(str(i)+'. '+song.title)
             i+=1
+        output.append('----------------')
     return output
 
 def find_movie(query):
