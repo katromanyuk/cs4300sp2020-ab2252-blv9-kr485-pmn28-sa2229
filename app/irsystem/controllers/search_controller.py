@@ -9,12 +9,14 @@ net_id = "Amber Baez: ab2252, Betsy Vasquez Valerio: blv9, " \
 
 @irsystem.route('/', methods=['GET'])
 def search():
-	query = request.args.get('search')
-	if not query:
-		data = []
+	query = request.args.get('search1')
+	query2 = request.args.get('search2')
+	if not query or not query2:
 		output_message = ''
+		data = ['Please fill out both fields']
 	else:
+		output_message = "Your search: " + query + " and " + query2
 		music = find_music(query)
-		output_message = "Your search: " + query
-		data = music
+		movie = find_movie(query2)
+		data= music + movie
 	return render_template('search.html', name=project_name, netid=net_id, output_message=output_message, data=data)
