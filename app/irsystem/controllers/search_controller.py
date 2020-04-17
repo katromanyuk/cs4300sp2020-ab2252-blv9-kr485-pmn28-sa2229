@@ -12,13 +12,12 @@ net_id = "Amber Baez: ab2252, Betsy Vasquez Valerio: blv9, " \
 def search():
     song = request.args.get('search1')
     movie = request.args.get('search2')
-    artist = request.args.get('search3')
     if not song or not movie:
         output_message = ''
         data = ['Please give us at least the song and movie!']
     else:
         output_message = "Your search: " + song + " and " + movie
-        music = find_music(song, artist)
+        music = find_music(song)
         movie = find_movie(movie)
         data = music + movie
     return render_template('search.html', name=project_name, netid=net_id, output_message=output_message, data=data)
