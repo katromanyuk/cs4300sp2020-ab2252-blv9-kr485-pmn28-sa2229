@@ -10,41 +10,33 @@ genius.verbose = False
 genius.remove_section_headers = True
 
 
-def find_music(song, artist):
+def find_music(artist, song=''):
     output = []
-    if artist and song:
+    if song != '':
         result = genius.search_song(song, artist)
         output.append('Song: '+result.title)
         output.append('Artist: '+result.artist)
         output.append('----------------')
         output.append('Lyrics: '+result.lyrics)
         output.append('----------------')
-    elif song:
-        result = genius.search_song(song)
-        output.append('Song: '+result.name)
-        output.append('Artist: '+result.artist)
+    else:
+        result = genius.search_artist(artist, max_songs=3)
+        output.append('Artist: '+result.name)
         output.append('----------------')
-        output.append('Lyrics')
-        output.append(result.lyrics)
-        output.append('----------------')
-    elif artist:
-        result = genius.search_artist(artist, max_songs=5)
-        output.append('Artist: '+result.artist)
-        output.append('----------------')
-        output.append('Top 5 Songs for this artist:')
+        output.append('Top 3 Songs for this artist:')
         i = 1
         for x in result.songs:
-            output.append(str(i) + " " + x.title)
+            output.append(str(i) + '. ' + x.title)
             i += 1
         output.append('----------------')
     return output
 
 
 def find_movie(movie):
-    output = []
+    output = ['Movie...']
     # find the movie plot summary using IMDB API
     #token = 'ce887dbd'
-    query = "http://www.omdbapi.com/?apikey=" + token + "&s=" + movie
+    #query = "http://www.omdbapi.com/?apikey=" + token + "&s=" + movie
     #params = {"r": "json"}
     #result = requests.request("GET", query)
     #plot = result[plot]
