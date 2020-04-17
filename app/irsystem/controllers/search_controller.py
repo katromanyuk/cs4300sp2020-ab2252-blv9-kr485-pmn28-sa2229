@@ -14,7 +14,7 @@ def search():
     movie = request.args.get('search2')
     if not song or not movie:
         output_message = ''
-        data = ['Please give us at least the song and movie!']
+        data = ['Please give us at least an artist and movie!']
     else:
         output_message = "Your search: " + song + " and " + movie
         music = find_music(song)
