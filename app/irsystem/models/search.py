@@ -55,14 +55,13 @@ def find_movie(movie):
     #query1 = "http://www.omdbapi.com/?apikey=" + token + "&s=" + movie
     params = {"r": "json", "plot": "full"}
     result = requests.get(query, params)
-    if response(result.text):
-        json = cleanjson(result.text)
-        plot = json[1]
-        title = json[0]
-        review_imdb = json[2]
-        review_rotten = json[3]
-        output.append('Plot of the movie entered : ' + str(plot))
-    else:
-        output.append(
-            "We did not find the movie you searched for. Did you spell it correctly?")
+    # if response(result.text):
+    json = cleanjson(result.text)
+    plot = json[1]
+    title = json[0]
+    review_imdb = json[2]
+    review_rotten = json[3]
+    output.append('Plot of the movie entered : ' + str(plot))
+    # else:
+    #output.append("We did not find the movie you searched for. Did you spell it correctly?")
     return output
