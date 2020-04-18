@@ -43,7 +43,8 @@ def cleanjson(result):
 
 
 def response(result):
-    return result[result.find('"Response":')+12: result.find('"Error"')-2] == 'True'
+    text = result[result.find('"Response":')+12:]
+    return text.find('True') > -1
 
 
 def find_movie(movie):
