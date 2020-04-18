@@ -35,11 +35,10 @@ def find_music(artist, song=''):
 def find_movie(movie):
     output = ['Movie...']
     # find the movie plot summary using IMDB API
-    #token = 'ce887dbd'
-    #query = "http://www.omdbapi.com/?apikey=" + token + "&s=" + movie
-    #params = {"r": "json"}
-    #result = requests.request("GET", query)
-    #plot = result[plot]
-    # output.append(plot)
+    token = 'ce887dbd'
+    query = "http://www.omdbapi.com/?apikey=" + token + "&s=" + movie
+    params = {"r": "json"}
+    result = requests.get(query, params)
+    output.append(result)
 
     return output
