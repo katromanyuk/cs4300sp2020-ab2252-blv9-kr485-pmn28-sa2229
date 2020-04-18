@@ -32,13 +32,36 @@ def find_music(artist, song=''):
     return output
 
 
+def cleanjson(result):
+    title = result[result.find("Title")+8:result.find("Year")-3]
+    plot = result[result.find("Plot")+7:result.find("Language")-3]
+    review_imdb = float(result[result.find(
+        '"Internet Movie Database","Value":"')+35:result.find('Source":"Rotten Tomatoes"')-8])
+    review_rotten = float(result[result.find(
+        'Source":"Rotten Tomatoes","Value":')+35: result.find('},{"Source":"Metacritic"')-2])
+    return [title, plot, review_imdb, review_rotten]
+
+
+def response(result):
+    return result[result.find('"Response":')+12: result.find('"Error"')-2] == 'True'
+
+
 def find_movie(movie):
-    output = ['Movie...']
+    output = []
     # find the movie plot summary using IMDB API
     token = 'ce887dbd'
-    query = "http://www.omdbapi.com/?apikey=" + token + "&s=" + movie
-    params = {"r": "json"}
+    query = "http://www.omdbapi.com/?apikey=" + token + "&t=" + movie
+    #query1 = "http://www.omdbapi.com/?apikey=" + token + "&s=" + movie
+    params = {"r": "json", "plot": "full"}
     result = requests.get(query, params)
-    output.append(result)
-
+    if response(result.text):
+        json = cleanjson(result.text)
+        plot = json[1]
+        title = json[0]
+        review_imdb = json[2]
+        review_rotten = json[3]
+        output.append('Plot of the movie entered : ' + str(plot))
+    else:
+        output.append(
+            "We did not find the movie you searched for. Did you spell it correctly?")
     return output
