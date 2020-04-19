@@ -61,7 +61,7 @@ def find_movie(movie):
         title = json[0]
         review_imdb = json[2]
         review_rotten = json[3]
-        output.append('Plot of the movie entered : ' + str(plot))
+        output.append('Plot of' + movie + ':' +str(plot))
     else:
         output.append(
             "We did not find the movie you searched for. Did you spell it correctly?")
