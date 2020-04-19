@@ -19,6 +19,6 @@ def search():
     else:
         output_message = 'Your search: '+song+' '+artist+' '+movie
         music = find_music(artist, song)
-        movie = find_movie(movie)
-        data = music + movie
+        mov = find_movie(movie)
+        data = music + mov
     return render_template('search.html', name=project_name, netid=net_id, output_message=output_message, data=data)
