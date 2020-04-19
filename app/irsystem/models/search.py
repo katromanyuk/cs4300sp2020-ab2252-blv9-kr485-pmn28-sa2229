@@ -49,19 +49,18 @@ def response(result):
 
 def find_movie(movie):
     output = []
-    # find the movie plot summary using IMDB API
     token = 'ce887dbd'
-    query = "http://www.omdbapi.com/?apikey=" + token + "&t=" + movie
-    #query1 = "http://www.omdbapi.com/?apikey=" + token + "&s=" + movie
+    query = "http://www.omdbapi.com/?apikey=" + token + "&t=" + str(movie)
     params = {"r": "json", "plot": "full"}
     result = requests.get(query, params)
-    # if response(result.text):
-    json = cleanjson(result.text)
-    plot = json[1]
-    title = json[0]
-    review_imdb = json[2]
-    review_rotten = json[3]
-    output.append('Plot of the movie entered : ' + str(plot))
-    # else:
-    #output.append("We did not find the movie you searched for. Did you spell it correctly?")
+    if response(result.text):
+        json = cleanjson(result.text)
+        plot = json[1]
+        title = json[0]
+        review_imdb = json[2]
+        review_rotten = json[3]
+        output.append('Plot of the movie entered : ' + str(plot))
+    else:
+        output.append(
+            "We did not find the movie you searched for. Did you spell it correctly?")
     return output
