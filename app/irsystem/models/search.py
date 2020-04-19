@@ -4,11 +4,12 @@ import lyricsgenius
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import requests
 
-TOKEN = 'sD0C3epnJdfOQQK4eIC45dHl-Qv7DipToGpuj1n4WeuG5_LDP1HKn31w5Cn1lOux'
-genius = lyricsgenius.Genius(TOKEN)
+genius_TOKEN = 'sD0C3epnJdfOQQK4eIC45dHl-Qv7DipToGpuj1n4WeuG5_LDP1HKn31w5Cn1lOux'
+genius = lyricsgenius.Genius(genius_TOKEN)
 genius.verbose = False
 genius.remove_section_headers = True
 
+omdb_TOKEN = 'ce887dbd'
 
 def find_music(artist, song=''):
     output = []
@@ -49,8 +50,7 @@ def response(result):
 
 def find_movie(movie):
     output = []
-    token = 'ce887dbd'
-    query = "http://www.omdbapi.com/?apikey=" + token + "&t=" + str(movie)
+    query = "http://www.omdbapi.com/?apikey=" + omdb_TOKEN + "&t=" + movie
     params = {"r": "json", "plot": "full"}
     result = requests.get(query, params)
     if response(result.text):
@@ -63,4 +63,5 @@ def find_movie(movie):
     else:
         output.append(
             "We did not find the movie you searched for. Did you spell it correctly?")
+    output.append('----------------')
     return output
