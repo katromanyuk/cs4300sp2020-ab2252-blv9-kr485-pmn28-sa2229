@@ -1,19 +1,20 @@
 <html>
 
 <head>
-    <link rel="stylesheet" href="/static/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/main.css">
+    <link rel="stylesheet" href="static/bootstrap.min.css">
+    <link rel="stylesheet" href="static/main.css">
 </head>
 
 <body>
+<section class="upper">
     <div class="topcorner">
         <p>Project Name: {{ name }}</p>
         <p>Student Names: ({{ netid }})</p>
     </div>
-    <form class="form-inline global-search">
+    <form class="form-inline global-search" id="searchForm">
         <h1 style="font-size: 55px; font-family:Futura; color: #1DB954">
             Melodic
-            <span style="color: #191414; ">Monkeys</span>
+            <span style="color: #1DB954; ">Monkeys</span>
             <span style="color: #1DB954; ">Movies</span>
         </h1>
 
@@ -21,7 +22,7 @@
 
         <div class="form-group">
             <input id="input" type="text" name="search1" class="form-control"
-                placeholder="Enter an artist you like">
+                placeholder="Enter an artist you like" required>
         </div>
 
         <div class="form-group">
@@ -31,20 +32,33 @@
 
         <div class="form-group">
             <input id="input" type="text" name="search3" class="form-control"
-                placeholder="Enter the title of a movie you like">
+                placeholder="Enter the title of a movie you like" required>
         </div>
-        <button type="submit" class="btn btn-info"> Go! </button>
-
+        <br><br>
+        <button type="submit" id="submit" class="btn btn-info">Search</button>
     </form>
+</section>
+
+<section class="lower" id="results">
     <form class="form-inline global-search">
         {% if data %}
-        <h1>{{output_message}}</h1>
+        <h1 style="font-size: 55px; font-family:Futura; color: #1DB954">{{output_message}}</h1>
         {% for d in data %}
         <br>
-        <p>{{d}}</p>
+        <p style="font-size: 40px; color:white;">{{d}}</p>
         {% endfor %}
         {% endif %}
     </form>
+    <button onclick="topFunction()" id="topbtn">Search Again</button>
+    <script>
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+
+</section>
+
 </body>
 
 </html>
