@@ -32,8 +32,6 @@ def get_data(artist, song, movie):
         output.append('Song: '+music_result.title)
         output.append('Artist: '+music_result.artist)
         output.append('----------------')
-        #output.append('Lyrics: '+result.lyrics)
-        #output.append('----------------')
         sentiment = analyzer.polarity_scores(music_result.lyrics)
         pos = sentiment['pos']
         neg = sentiment['neg']
@@ -53,12 +51,20 @@ def get_data(artist, song, movie):
         neg = neg/3
         output.append('----------------')
     label = closest_centroid(pos, neg)
-    filtered_movies = get_movie_cluster(label)
+    filtered_movies = get_movie_cluster(label, movies)
+    filtered_movies = filtered_movies.reset_index()
+    filtered_movies = filtered_movies.drop(['index','Unnamed: 0'], axis=1)
     #print(filtered_movies.head(3))
-    #movie_to_id = create_mov_to_id(filtered_movies)
-    #id_to_index = create_id_to_ind(filtered_movies)
+    movie_to_id = create_mov_to_id(filtered_movies)
+    id_to_index = create_id_to_ind(filtered_movies)
     movie_result = find_movie(movie)
-    output.append('Plot of ' + movie_result[0] + ': ' +str(movie_result[1]))
+    output.append('Movie: ' + movie_result[0])
+    #output.append('Plot: ' + str(movie_result[1]))
+    output.append('----------------')
+    output.append('Your Movie Recommendations Are:')
+    output.append('----------------')
+    top10 = sorted_top10(movie_result, filtered_movies, movie_to_id, id_to_index)
+    output = output + top10
     output.append('----------------')
     return output
 
@@ -79,7 +85,7 @@ def closest_centroid(pos, neg):
     return index
 
 
-def get_movie_cluster(label):
+def get_movie_cluster(label, movies):
     has_label = movies['k=5']==label
     filtered_movies = movies[has_label]
     return filtered_movies
@@ -114,19 +120,12 @@ def find_movie(movie):
         review_imdb = json[2]
         review_rotten = json[3]
         #output.append('Plot of ' + movie + ':' +str(plot))
-    else:
-        '''output.append(
+    '''else:
+        output.append(
             "We did not find the movie you searched for. Did you spell it correctly?")
     output.append('----------------')'''
     return (title, plot)
 
-
-def get_sim(mov1, mov2):
-    sum1 = get_summary(mov1)
-    sum2 = get_summary(mov2)
-    doc = [sum1, sum2]
-    tfidf = vectorizer.fit_transform(doc)
-    return cosine_similarity(tfidf)[0][1]
 
 def create_mov_to_id(data):
     movie_to_id = {}
@@ -141,38 +140,87 @@ def create_id_to_ind(data):
         id_to_index[wikiid] = i
     return id_to_index
 
-def get_genres(movie):
+def get_summary(movie, data, movie_to_id, id_to_index):
     wiki_id = movie_to_id.get(movie)
     ind = id_to_index.get(wiki_id)
-    genre = movie_data['Genres'][ind]
-    return genre
-
-def get_summary(movie):
-    wiki_id = movie_to_id.get(movie)
-    ind = id_to_index.get(wiki_id)
-    summary = movie_data['Summary'][ind]
+    summary = data['Summary'][ind]
     return summary
 
-def get_pos(movie):
+def sorted_top10(movie, data, movie_to_id, id_to_index):
+    top10 = get_top10(movie, data, movie_to_id, id_to_index)
+    top10 = sorted(top10.items(), key=lambda x: x[1], reverse=True)
+    sorted10 = []
+    for info in top10:
+        wiki = info[0]
+        ind = id_to_index.get(wiki)
+        title = data['Title'][ind]
+        sorted10.append(title)
+    return sorted10
+
+def get_top10(movie, data, movie_to_id, id_to_index):
+    top_movie = {}
+    name = movie[0]
+    arr = compare_sim(movie, data, movie_to_id, id_to_index)
+    wiki_id1 = movie_to_id.get(name)
+    top_indices = np.argpartition(-arr, 11)
+    list_of_ind = top_indices[:11]
+    for ind in list_of_ind:
+        title = data['Title'][ind]
+        wiki_id2 = data['WikiID'][ind]
+        if title != name:
+            top_movie[wiki_id2] = arr[ind]
+    return top_movie
+
+def compare_sim(movie, data, movie_to_id, id_to_index):
+    name = movie[0]
+    plot = movie[1]
+    wiki_id1 = movie_to_id.get(name)
+    arr = np.zeros(len(data))
+    for wiki_id2 in data['WikiID']:
+        ind = id_to_index.get(wiki_id2)
+        movie2 = data['Title'][ind]
+        if wiki_id2 == wiki_id1:
+            value = 1
+        else:
+            plot2 = get_summary(movie2, data, movie_to_id, id_to_index)
+            value = get_sim(plot, plot2, data, movie_to_id, id_to_index)
+        arr[ind] = value
+    return arr
+
+def get_sim(plot1, plot2, data, movie_to_id, id_to_index):
+    #sum1 = get_summary(mov1, data, movie_to_id, id_to_index)
+    #sum2 = get_summary(mov2, data, movie_to_id, id_to_index)
+    doc = [plot1, plot2]
+    tfidf = vectorizer.fit_transform(doc)
+    return cosine_similarity(tfidf)[0][1]
+
+
+def get_genres(movie, data, movie_to_id, id_to_index):
     wiki_id = movie_to_id.get(movie)
     ind = id_to_index.get(wiki_id)
-    pos = movie_data['pos'][ind]
+    genre = data['Genres'][ind]
+    return genre
+
+def get_pos(movie, data, movie_to_id, id_to_index):
+    wiki_id = movie_to_id.get(movie)
+    ind = id_to_index.get(wiki_id)
+    pos = data['pos'][ind]
     return pos
 
-def get_neg(movie):
+def get_neg(movie, data, movie_to_id, id_to_index):
     wiki_id = movie_to_id.get(movie)
     ind = id_to_index.get(wiki_id)
-    neg = movie_data['neg'][ind]
+    neg = data['neg'][ind]
     return neg
 
-def get_compound(movie):
+def get_neu(movie, data, movie_to_id, id_to_index):
     wiki_id = movie_to_id.get(movie)
     ind = id_to_index.get(wiki_id)
-    comp = movie_data['compound'][ind]
-    return comp
-
-def get_neu(movie):
-    wiki_id = movie_to_id.get(movie)
-    ind = id_to_index.get(wiki_id)
-    neu = movie_data['neu'][ind]
+    neu = data['neu'][ind]
     return neu
+
+def get_compound(movie, data, movie_to_id, id_to_index):
+    wiki_id = movie_to_id.get(movie)
+    ind = id_to_index.get(wiki_id)
+    comp = data['compound'][ind]
+    return comp
