@@ -20,7 +20,7 @@ centroids = [
 [0.18591696, 0.05011211], [0.05184902, 0.12665329]
 ]
 
-pth = 'C:/Users/katro/Desktop/cs4300sp2020-ab2252-blv9-kr485-pmn28-sa2229/app/irsystem/models/merged_kmeans.csv'
+pth = 'app/irsystem/merged_kmeans.csv'
 movies = pd.read_csv(pth)
 
 
