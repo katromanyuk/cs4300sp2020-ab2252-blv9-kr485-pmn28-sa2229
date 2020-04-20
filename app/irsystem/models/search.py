@@ -1,3 +1,4 @@
+import math
 import numpy as np
 import pandas as pd
 import lyricsgenius
@@ -11,14 +12,37 @@ genius.remove_section_headers = True
 
 omdb_TOKEN = 'ce887dbd'
 
+centroids = [
+[0.06711672, 0.04812787], [0.06227717, 0.21820184], [0.11817479, 0.11362219],
+[0.18591696, 0.05011211], [0.05184902, 0.12665329]
+]
+
+movie_labels = pd.read_csv('merged_kmeans.csv', encoding='utf-8')
+
+def closest_centroid(pos, neg):
+    dist = []
+    for c in centroids:
+        dist.append(math.sqrt((pos - c[0])**2 + (neg - c[1])**2))
+    index = dist.index(min(dist))
+    return index
+
+def get_movie_cluster(label):
+
+
 def find_music(artist, song=''):
     output = []
     if song != '':
         result = genius.search_song(song, artist)
         output.append('Song: '+result.title)
         output.append('Artist: '+result.artist)
-        output.append('----------------')
-        output.append('Lyrics: '+result.lyrics)
+        #output.append('Lyrics: '+result.lyrics)
+        #output.append('----------------')
+        lyrics = result.lyrics
+        analyzer = SentimentIntensityAnalyzer()
+        sentiment = analyzer.polarity_scores(lyrics)['compound']
+        pos = sentiment['pos']
+        neg = sentiment['neg']
+        output.append('Compound sentiment: '+sentiment)
         output.append('----------------')
     else:
         result = genius.search_artist(artist, max_songs=3)
