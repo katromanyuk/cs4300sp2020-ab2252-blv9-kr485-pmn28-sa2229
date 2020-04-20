@@ -96,10 +96,16 @@ def get_movie_cluster(label, movies):
 def cleanjson(result):
     title = result[result.find("Title")+8:result.find("Year")-3]
     plot = result[result.find("Plot")+7:result.find("Language")-3]
-    review_imdb = float(result[result.find(
+    try:
+        review_imdb = float(result[result.find(
         '"Internet Movie Database","Value":"')+35:result.find('Source":"Rotten Tomatoes"')-8])
-    review_rotten = float(result[result.find(
+    except:
+        review_imdb = -1
+    try:
+        review_rotten = float(result[result.find(
         'Source":"Rotten Tomatoes","Value":')+35: result.find('},{"Source":"Metacritic"')-2])
+    except:
+        review_rotten = -1
     return [title, plot, review_imdb, review_rotten]
 
 
@@ -161,7 +167,9 @@ def get_top10(movie, data, movie_to_id, id_to_index):
     top_movie = {}
     name = movie[0]
     arr = compare_sim(movie, data, movie_to_id, id_to_index)
-    wiki_id1 = movie_to_id.get(name)
+    wiki_id1 = -1
+    if name in movie_to_id:
+        wiki_id1 = movie_to_id.get(name)
     top_indices = np.argpartition(-arr, 11)
     list_of_ind = top_indices[:11]
     for ind in list_of_ind:
