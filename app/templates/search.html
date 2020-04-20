@@ -1,8 +1,8 @@
 <html>
 
 <head>
-    <link rel="stylesheet" href="/app/static/bootstrap.min.css">
-    <link rel="stylesheet" href="/app/static/main.css">
+    <link rel="stylesheet" href="/static/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/main.css">
 </head>
 
 <body>
@@ -11,15 +11,14 @@
         <p>Project Name: {{ name }}</p>
         <p>Student Names: ({{ netid }})</p>
     </div>
-    <form class="form-inline global-search" id="searchForm">
+    <form class="form-inline global-search" id="searchForm" novalidate>
         <h1 style="font-size: 55px; font-family:Futura; color: #1DB954">
-            Melodic
-            <span style="color: #1DB954; ">Monkeys</span>
-            <span style="color: #1DB954; ">Movies</span>
+            Melodic Monkeys Movies
         </h1>
 
         <br><br>
-
+        <!-- Add responsive feedback for required fields -->
+        <!-- form validation using python: render_template value testing inputs -->
         <div class="form-group">
             <input id="input" type="text" name="search1" class="form-control"
                 placeholder="Enter an artist you like" required>
@@ -42,10 +41,10 @@
 <section class="lower" id="results">
     <form class="form-inline global-search">
         {% if data %}
-        <h1 style="font-size: 55px; font-family:Futura; color: #1DB954">{{output_message}}</h1>
+        <h1 style="font-size: 40px; font-family:Futura; color: #1DB954">{{output_message}}</h1>
         {% for d in data %}
         <br>
-        <p style="font-size: 40px; color:white;">{{d}}</p>
+        <p style="font-size: 24px; color:white;">{{d}}</p>
         {% endfor %}
         {% endif %}
     </form>
