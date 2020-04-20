@@ -17,8 +17,8 @@ def search():
         output_message = ''
         data = ['Please give us at least an artist and movie!']
     else:
-        output_message = 'Your search: '+song+' '+artist+' '+movie
-        music = find_music(artist, song)
-        mov = find_movie(movie)
-        data = music + mov
+        output_message = 'Your search: '+artist+' '+song+' '+movie
+        #music = find_music(artist, song)
+        #mov = find_movie(movie)
+        data = get_data(artist, song, movie)
     return render_template('search.html', name=project_name, netid=net_id, output_message=output_message, data=data)
