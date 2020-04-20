@@ -25,6 +25,9 @@ movies = pd.read_csv(pth)
 
 
 def get_data(artist, song, movie):
+    movie_result = find_movie(movie)
+    if movie_result=='ERROR':
+        return ['We did not find the movie you searched for. Did you spell it correctly?']
     output = []
     music_result = find_music(artist, song)
     pos = neg = ''
@@ -57,7 +60,6 @@ def get_data(artist, song, movie):
     #print(filtered_movies.head(3))
     movie_to_id = create_mov_to_id(filtered_movies)
     id_to_index = create_id_to_ind(filtered_movies)
-    movie_result = find_movie(movie)
     output.append('Movie: ' + movie_result[0])
     #output.append('Plot: ' + str(movie_result[1]))
     output.append('----------------')
@@ -120,10 +122,8 @@ def find_movie(movie):
         review_imdb = json[2]
         review_rotten = json[3]
         #output.append('Plot of ' + movie + ':' +str(plot))
-    '''else:
-        output.append(
-            "We did not find the movie you searched for. Did you spell it correctly?")
-    output.append('----------------')'''
+    else:
+        return "ERROR"
     return (title, plot)
 
 
