@@ -15,8 +15,7 @@ omdb_TOKEN = 'ce887dbd'
 analyzer = SentimentIntensityAnalyzer()
 vectorizer = TfidfVectorizer()
 
-centroids =
-[
+centroids = [
 [0.06711672, 0.04812787], [0.06227717, 0.21820184], [0.11817479, 0.11362219],
 [0.18591696, 0.05011211], [0.05184902, 0.12665329]
 ]
@@ -98,7 +97,7 @@ def closest_centroid(pos, neg):
 
 
 def get_movie_cluster(label, movies):
-    has_label = movies['k=6']==label
+    has_label = movies['k=5']==label
     filtered_movies = movies[has_label]
     return filtered_movies
 
