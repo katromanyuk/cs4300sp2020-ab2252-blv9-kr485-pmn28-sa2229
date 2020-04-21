@@ -16,9 +16,18 @@ analyzer = SentimentIntensityAnalyzer()
 vectorizer = TfidfVectorizer()
 
 centroids = [
+[0.04401261, 0.04654885],
+[0.05372926, 0.12658625],
+[0.20556818, 0.05363152],
+[0.05482889, 0.2243107 ],
+[0.11986076, 0.14063887],
+[0.11086006, 0.06478736],
+]
+
+'''[
 [0.06711672, 0.04812787], [0.06227717, 0.21820184], [0.11817479, 0.11362219],
 [0.18591696, 0.05011211], [0.05184902, 0.12665329]
-]
+]'''
 
 pth = 'app/irsystem/merged_kmeans.csv'
 movies = pd.read_csv(pth)
@@ -88,7 +97,7 @@ def closest_centroid(pos, neg):
 
 
 def get_movie_cluster(label, movies):
-    has_label = movies['k=5']==label
+    has_label = movies['k=6']==label
     filtered_movies = movies[has_label]
     return filtered_movies
 
@@ -196,8 +205,6 @@ def compare_sim(movie, data, movie_to_id, id_to_index):
     return arr
 
 def get_sim(plot1, plot2, data, movie_to_id, id_to_index):
-    #sum1 = get_summary(mov1, data, movie_to_id, id_to_index)
-    #sum2 = get_summary(mov2, data, movie_to_id, id_to_index)
     doc = [plot1, plot2]
     tfidf = vectorizer.fit_transform(doc)
     return cosine_similarity(tfidf)[0][1]
