@@ -18,13 +18,20 @@ analyzer = SentimentIntensityAnalyzer()
 vectorizer = TfidfVectorizer(stop_words='english', max_features=50000, max_df=0.8, min_df=20, norm='l2')
 tokenizer = vectorizer.build_tokenizer()
 
-inv_idx = np.load('app/inv_idx.npy',allow_pickle='TRUE').item()
+#inv_idx = np.load('app/inv_idx.npy',allow_pickle='TRUE').item()
 movies = pd.read_csv('app/merged_data.csv')
 num_movies = len(movies)
 norms = np.loadtxt('app/norms.csv', delimiter=',')
-min_df = 20
-max_df_ratio = 0.8
-idf = {x: math.log2(num_movies/(1+len(inv_idx[x]))) for x in inv_idx if len(inv_idx[x])>=min_df and len(inv_idx[x])/num_movies<=max_df_ratio}
+inv_idx = pd.read_csv('app/inv_idx.csv')
+inv_idx.columns = ['word','docs','counts']
+z = tuple(zip(inv_idx['word'],inv_idx['docs']))
+idf = {a: math.log2(num_movies/(1+len(b))) for (a,b) in z if len(b)>=20 and len(b)/num_movies<=0.8}
+word_to_index = {word:i for i, word in enumerate(inv_idx['word'])}
+
+docs = [d.strip('[]').split(', ') for d in inv_idx['docs']]
+inv_idx['docs'] = docs
+counts = [c.strip('[]').split(', ') for c in inv_idx['counts']]
+inv_idx['counts'] = counts
 
 #with open('app/irsystem/inv_idx.pkl', 'rb') as f:
 #     inv_idx = pickle.load(f)
@@ -75,7 +82,7 @@ def get_data(artist, song, movie):
     output.append('Your Movie Recommendations Are:')
     dists = get_sent_dist(pos,neg)
     #idf = compute_idf(inv_idx,num_movies)
-    cosims = index_search(movie_result[1],idf)
+    cosims = index_search(movie_result[1])
     ten = get_10(movie_result[0],dists,cosims)
     output = output + ten
     return output
@@ -150,7 +157,7 @@ def listify(df):
 #    return idf
 
 
-def index_search(query,idf):
+def index_search(query):
     #movie = find_movie(user_mov)
     #query = movie[1]
     #query = ''
@@ -165,13 +172,17 @@ def index_search(query,idf):
     q_norm_sq = 0
     for t in set(q_tokens):
         if t in idf:
+            ind = word_to_index[t]
             q_norm_sq += (q_tokens.count(t)*idf[t])**2
-            for (doc,cnt) in inv_idx[t]:
+            for (doc,cnt) in tuple(zip(inv_idx['docs'][ind],inv_idx['counts'][ind])):
+                #print(doc,cnt)
+                doc = int(doc)
+                cnt = int(cnt)
                 scores[doc] += (q_tokens.count(t)*cnt*idf[t]**2)/norms[doc]
     q_norm = math.sqrt(q_norm_sq)
     new_scores = [score/q_norm for score in scores]
-    pos = [x for x in movies['pos']]
-    neg = [x for x in movies['neg']]
+    #pos = [x for x in movies['pos']]
+    #neg = [x for x in movies['neg']]
     #result = sorted(tuple(zip(new_scores,docs)),reverse=True)
     result = new_scores
     return result
@@ -191,7 +202,7 @@ def get_sent_dist(p1, n1):
 
 def get_10(movie,dists,cosims):
     docs = [i for i in range(len(norms))]
-    scores = [1.5*float(c) - .8*float(d) for c,d in zip(dists,cosims)]
+    scores = [1*float(c) - 100*float(d) for c,d in zip(dists,cosims)]
     results = sorted(tuple(zip(scores,docs)),reverse=True)
     ten = []
     i = 1
