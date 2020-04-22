@@ -1,3 +1,4 @@
+import csv
 import math
 import numpy as np
 import pandas as pd
@@ -16,13 +17,11 @@ analyzer = SentimentIntensityAnalyzer()
 vectorizer = TfidfVectorizer(stop_words='english', max_features=50000, max_df=0.8, min_df=20, norm='l2')
 tokenizer = vectorizer.build_tokenizer()
 
+
 movies = pd.read_csv('app/merged_data.csv')
 num_movies = len(movies)
 norms = np.loadtxt('app/norms.csv', delimiter=',')
-try:
-    inv_idx = np.load('app/inv_idx.npy',allow_pickle='TRUE').item()
-except:
-    print(sys.exc_info()[0])
+inv_idx = np.load('app/inv_idx.npy',allow_pickle='TRUE').item()
 #with open('app/irsystem/inv_idx.pkl', 'rb') as f:
 #     inv_idx = pickle.load(f)
 #with open('inv_idx.txt', 'r') as file:
@@ -70,10 +69,10 @@ def get_data(artist, song, movie):
     output.append('Movie: ' + movie_result[0])
     output.append('----------------')
     output.append('Your Movie Recommendations Are:')
-    #idf = compute_idf(inv_idx,num_movies)
-    #results = index_search(movie_result[1],idf)
-    #ten = get_10(movie_result[0],results)
-    #output = output + ten
+    idf = compute_idf(inv_idx,num_movies)
+    results = index_search(movie_result[1],inv_idx,idf)
+    ten = get_10(movie_result[0],results)
+    output = output + ten
     return output
 
 
@@ -146,7 +145,7 @@ def compute_idf(inv_idx, n_docs, min_df=20, max_df_ratio=0.8):
     return idf
 
 
-def index_search(query,idf):
+def index_search(query,inv_idx,idf):
     #movie = find_movie(user_mov)
     #query = movie[1]
     #query = ''
@@ -169,7 +168,6 @@ def index_search(query,idf):
     pos = [x for x in movies['pos']]
     neg = [x for x in movies['neg']]
     result = sorted(tuple(zip(new_scores,docs)),reverse=True)
-
     return result[:10]
 
 
