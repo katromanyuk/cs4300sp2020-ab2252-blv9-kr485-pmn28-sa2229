@@ -26,8 +26,8 @@ norms = np.loadtxt('app/norms.csv', delimiter=',')
 
 #with open('app/irsystem/inv_idx.pkl', 'rb') as f:
 #     inv_idx = pickle.load(f)
-#with open('app/inv_idx.txt', 'r') as file:
-#    inv_idx = json.load(file)
+with open('app/inv_idx.txt', 'r') as file:
+    inv_idx = json.load(file)
 
 
 def get_data(artist, song, movie):
@@ -71,10 +71,10 @@ def get_data(artist, song, movie):
     output.append('Movie: ' + movie_result[0])
     output.append('----------------')
     output.append('Your Movie Recommendations Are:')
-    #idf = compute_idf(inv_idx,num_movies)
-    #results = index_search(movie_result[1],idf)
-    #ten = get_10(movie_result[0],results)
-    #output = output + ten
+    idf = compute_idf(inv_idx,num_movies)
+    results = index_search(movie_result[1],idf)
+    ten = get_10(movie_result[0],results)
+    output = output + ten
     return output
 
 
