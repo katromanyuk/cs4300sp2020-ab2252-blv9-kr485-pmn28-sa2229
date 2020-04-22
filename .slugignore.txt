@@ -1,0 +1,7 @@
+/app/*.ipynb
+*.ipynb
+/__pycache--
+/app/__pychache__
+/app/irsystem/__pychache__
+/app/irsystem/.ipynb_checkpoints
+/clever-monkeys-tv

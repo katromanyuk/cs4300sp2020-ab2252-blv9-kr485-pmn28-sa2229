@@ -16,10 +16,10 @@ analyzer = SentimentIntensityAnalyzer()
 vectorizer = TfidfVectorizer(stop_words='english', max_features=50000, max_df=0.8, min_df=20, norm='l2')
 tokenizer = vectorizer.build_tokenizer()
 
-movies = pd.read_csv('app/irsystem/merged_data.csv')
+movies = pd.read_csv('app/merged_data.csv')
 num_movies = len(movies)
-norms = np.loadtxt('app/irsystem/norms.csv', delimiter=',')
-#inv_idx = np.load('app/irsystem/inv_idx.npy',allow_pickle='TRUE').item()
+norms = np.loadtxt('app/norms.csv', delimiter=',')
+inv_idx = np.load('app/inv_idx.npy',allow_pickle='TRUE').item()
 #with open('app/irsystem/inv_idx.pkl', 'rb') as f:
 #     inv_idx = pickle.load(f)
 #with open('inv_idx.txt', 'r') as file:
@@ -67,10 +67,10 @@ def get_data(artist, song, movie):
     output.append('Movie: ' + movie_result[0])
     output.append('----------------')
     output.append('Your Movie Recommendations Are:')
-    #idf = compute_idf(inv_idx,num_movies)
-    #results = index_search(movie_result[1],idf)
-    #ten = get_10(movie_result[0],results)
-    #output = output + ten
+    idf = compute_idf(inv_idx,num_movies)
+    results = index_search(movie_result[1],idf)
+    ten = get_10(movie_result[0],results)
+    output = output + ten
     return output
 
 
@@ -181,7 +181,7 @@ def get_10(movie,results):
         if movies['Title'][ind] != movie:
             ten.append(str(i)+'.')
             ten.append(movies['Title'][ind])
-            ten.append('Score: '+str(sim))
+            ten.append('Score: '+str(score))
             i+=1
     return ten
 
