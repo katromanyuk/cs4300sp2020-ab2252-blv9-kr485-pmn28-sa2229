@@ -18,16 +18,18 @@ analyzer = SentimentIntensityAnalyzer()
 vectorizer = TfidfVectorizer(stop_words='english', max_features=50000, max_df=0.8, min_df=20, norm='l2')
 tokenizer = vectorizer.build_tokenizer()
 
-
+inv_idx = np.load('app/inv_idx.npy',allow_pickle='TRUE').item()
 movies = pd.read_csv('app/merged_data.csv')
 num_movies = len(movies)
 norms = np.loadtxt('app/norms.csv', delimiter=',')
-#inv_idx = np.load('app/inv_idx.npy',allow_pickle='TRUE').item()
+min_df = 20
+max_df_ratio = 0.8
+idf = {x: math.log2(num_movies/(1+len(inv_idx[x]))) for x in inv_idx if len(inv_idx[x])>=min_df and len(inv_idx[x])/num_movies<=max_df_ratio}
 
 #with open('app/irsystem/inv_idx.pkl', 'rb') as f:
 #     inv_idx = pickle.load(f)
-with open('app/inv_idx.txt', 'r') as file:
-    inv_idx = json.load(file)
+#with open('app/inv_idx.txt', 'r') as file:
+#    inv_idx = json.load(file)
 
 
 def get_data(artist, song, movie):
@@ -71,9 +73,10 @@ def get_data(artist, song, movie):
     output.append('Movie: ' + movie_result[0])
     output.append('----------------')
     output.append('Your Movie Recommendations Are:')
-    idf = compute_idf(inv_idx,num_movies)
-    results = index_search(movie_result[1],idf)
-    ten = get_10(movie_result[0],results)
+    dists = get_sent_dist(pos,neg)
+    #idf = compute_idf(inv_idx,num_movies)
+    cosims = index_search(movie_result[1],idf)
+    ten = get_10(movie_result[0],dists,cosims)
     output = output + ten
     return output
 
@@ -141,10 +144,10 @@ def listify(df):
     return df
 
 
-def compute_idf(inv_idx, n_docs, min_df=20, max_df_ratio=0.8):
-    idf = {x: math.log2(n_docs/(1+len(inv_idx[x]))) for x in inv_idx
-           if len(inv_idx[x])>=min_df and len(inv_idx[x])/n_docs<=max_df_ratio}
-    return idf
+#def compute_idf(inv_idx, n_docs, min_df=20, max_df_ratio=0.8):
+#    idf = {x: math.log2(n_docs/(1+len(inv_idx[x]))) for x in inv_idx
+#           if len(inv_idx[x])>=min_df and len(inv_idx[x])/n_docs<=max_df_ratio}
+#    return idf
 
 
 def index_search(query,idf):
@@ -156,7 +159,7 @@ def index_search(query,idf):
     #else:
     #    query = movie[1]
     scores = np.zeros(len(norms))
-    docs = [i for i in range(len(norms))]
+    #docs = [i for i in range(len(norms))]
     q = query.lower()
     q_tokens = tokenizer(q)
     q_norm_sq = 0
@@ -169,8 +172,9 @@ def index_search(query,idf):
     new_scores = [score/q_norm for score in scores]
     pos = [x for x in movies['pos']]
     neg = [x for x in movies['neg']]
-    result = sorted(tuple(zip(new_scores,docs)),reverse=True)
-    return result[:10]
+    #result = sorted(tuple(zip(new_scores,docs)),reverse=True)
+    result = new_scores
+    return result
 
 
 def get_sent_dist(p1, n1):
@@ -185,7 +189,10 @@ def get_sent_dist(p1, n1):
     #dist.append(math.sqrt((pos - c[0])**2 + (neg - c[1])**2))
 
 
-def get_10(movie,results):
+def get_10(movie,dists,cosims):
+    docs = [i for i in range(len(norms))]
+    scores = [1.5*float(c) - .8*float(d) for c,d in zip(dists,cosims)]
+    results = sorted(tuple(zip(scores,docs)),reverse=True)
     ten = []
     i = 1
     for (score,ind) in results[:10]:
