@@ -22,7 +22,7 @@ norms = np.loadtxt('app/norms.csv', delimiter=',')
 try:
     inv_idx = np.load('app/inv_idx.npy',allow_pickle='TRUE').item()
 except:
-    print(sys,exc_info()[0])
+    print(sys.exc_info()[0])
 #with open('app/irsystem/inv_idx.pkl', 'rb') as f:
 #     inv_idx = pickle.load(f)
 #with open('inv_idx.txt', 'r') as file:
