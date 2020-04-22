@@ -1,5 +1,6 @@
 import csv
 import math
+import json
 import numpy as np
 import pandas as pd
 import pickle
@@ -21,11 +22,12 @@ tokenizer = vectorizer.build_tokenizer()
 movies = pd.read_csv('app/merged_data.csv')
 num_movies = len(movies)
 norms = np.loadtxt('app/norms.csv', delimiter=',')
-inv_idx = np.load('app/inv_idx.npy',allow_pickle='TRUE').item()
+#inv_idx = np.load('app/inv_idx.npy',allow_pickle='TRUE').item()
+
 #with open('app/irsystem/inv_idx.pkl', 'rb') as f:
 #     inv_idx = pickle.load(f)
-#with open('inv_idx.txt', 'r') as file:
-#    new_d = json.load(file)
+with open('app/inv_idx.txt', 'r') as file:
+    inv_idx = json.load(file)
 
 
 def get_data(artist, song, movie):
@@ -70,7 +72,7 @@ def get_data(artist, song, movie):
     output.append('----------------')
     output.append('Your Movie Recommendations Are:')
     idf = compute_idf(inv_idx,num_movies)
-    results = index_search(movie_result[1],inv_idx,idf)
+    results = index_search(movie_result[1],idf)
     ten = get_10(movie_result[0],results)
     output = output + ten
     return output
@@ -145,7 +147,7 @@ def compute_idf(inv_idx, n_docs, min_df=20, max_df_ratio=0.8):
     return idf
 
 
-def index_search(query,inv_idx,idf):
+def index_search(query,idf):
     #movie = find_movie(user_mov)
     #query = movie[1]
     #query = ''
