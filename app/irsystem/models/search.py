@@ -18,8 +18,8 @@ tokenizer = vectorizer.build_tokenizer()
 
 movies = pd.read_csv('app/irsystem/merged_data.csv')
 num_movies = len(movies)
-inv_idx = np.load('app/irsystem/inv_idx.npy',allow_pickle='TRUE').item()
-norms = np.loadtxt('app/irsystem/norms.csv', delimiter=',')
+#inv_idx = np.load('app/irsystem/inv_idx.npy',allow_pickle='TRUE').item()
+#norms = np.loadtxt('app/irsystem/norms.csv', delimiter=',')
 
 
 def get_data(artist, song, movie):
@@ -62,13 +62,13 @@ def get_data(artist, song, movie):
     +neu_p+'% neutral'
     output.append(s)
     output.append('----------------')
-    idf = compute_idf(inv_idx,num_movies)
     output.append('Movie: ' + movie_result[0])
     output.append('----------------')
     output.append('Your Movie Recommendations Are:')
-    results = index_search(movie_result[1],idf)
-    ten = get_10(movie_result[0],results)
-    output = output + ten
+    #idf = compute_idf(inv_idx,num_movies)
+    #results = index_search(movie_result[1],idf)
+    #ten = get_10(movie_result[0],results)
+    #output = output + ten
     return output
 
 
@@ -161,11 +161,13 @@ def index_search(query,idf):
                 scores[doc] += (q_tokens.count(t)*cnt*idf[t]**2)/norms[doc]
     q_norm = math.sqrt(q_norm_sq)
     new_scores = [score/q_norm for score in scores]
-    result = sorted(tuple(zip(new_scores, docs)),reverse=True)
-    return result[:50]
+    pos = [x for x in movies['pos']]
+    neg = [x for x in movies['neg']]
+    result = sorted(tuple(zip(new_scores,pos,neg,docs)),reverse=True)
+    return result[:100]
 
 
-def weigh_score(sent,cosim,rating,w1,w2,w3):
+#def weigh_score(cosim,pos,neg,rating,w1,w2,w3):
     #total = 0
     #dist.append(math.sqrt((pos - c[0])**2 + (neg - c[1])**2))
 
@@ -173,7 +175,7 @@ def weigh_score(sent,cosim,rating,w1,w2,w3):
 def get_10(movie,results):
     ten = []
     i = 1
-    for (sim, ind) in results[:10]:
+    for (score,p,n,ind) in results[:10]:
         if movies['Title'][ind] != movie:
             ten.append(str(i)+'.')
             ten.append(movies['Title'][ind])
