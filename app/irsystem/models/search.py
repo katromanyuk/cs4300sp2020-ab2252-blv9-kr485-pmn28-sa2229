@@ -165,8 +165,16 @@ def index_search(query,idf):
     new_scores = [score/q_norm for score in scores]
     pos = [x for x in movies['pos']]
     neg = [x for x in movies['neg']]
-    result = sorted(tuple(zip(new_scores,pos,neg,docs)),reverse=True)
-    return result[:100]
+    result = sorted(tuple(zip(new_scores,docs)),reverse=True)
+
+    return result[:10]
+
+
+def get_sent_dist(p1, n1):
+    dist = []
+    for p2,n2 in tuple(zip(movies['pos'], movies['neg'])):
+        dist.append(math.sqrt((p2 - p1)**2 + (n2 - n1)**2))
+    return dist
 
 
 #def weigh_score(cosim,pos,neg,rating,w1,w2,w3):
@@ -177,7 +185,7 @@ def index_search(query,idf):
 def get_10(movie,results):
     ten = []
     i = 1
-    for (score,p,n,ind) in results[:10]:
+    for (score,ind) in results[:10]:
         if movies['Title'][ind] != movie:
             ten.append(str(i)+'.')
             ten.append(movies['Title'][ind])
