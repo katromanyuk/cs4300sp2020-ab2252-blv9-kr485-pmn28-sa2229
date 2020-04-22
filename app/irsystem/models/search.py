@@ -19,7 +19,7 @@ tokenizer = vectorizer.build_tokenizer()
 movies = pd.read_csv('app/irsystem/merged_data.csv')
 num_movies = len(movies)
 #inv_idx = np.load('app/irsystem/inv_idx.npy',allow_pickle='TRUE').item()
-#norms = np.loadtxt('app/irsystem/norms.csv', delimiter=',')
+norms = np.loadtxt('app/irsystem/norms.csv', delimiter=',')
 
 
 def get_data(artist, song, movie):
