@@ -19,7 +19,7 @@ tokenizer = vectorizer.build_tokenizer()
 movies = pd.read_csv('app/irsystem/merged_data.csv')
 num_movies = len(movies)
 norms = np.loadtxt('app/irsystem/norms.csv', delimiter=',')
-inv_idx = np.load('app/irsystem/inv_idx.npy',allow_pickle='TRUE').item()
+#inv_idx = np.load('app/irsystem/inv_idx.npy',allow_pickle='TRUE').item()
 #with open('app/irsystem/inv_idx.pkl', 'rb') as f:
 #     inv_idx = pickle.load(f)
 #with open('inv_idx.txt', 'r') as file:
