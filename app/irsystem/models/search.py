@@ -1,11 +1,11 @@
 import math
 import numpy as np
 import pandas as pd
+import pickle
 import requests
 import lyricsgenius
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from sklearn.feature_extraction.text import TfidfVectorizer
-#from sklearn.metrics.pairwise import cosine_similarity
 
 genius_TOKEN = 'sD0C3epnJdfOQQK4eIC45dHl-Qv7DipToGpuj1n4WeuG5_LDP1HKn31w5Cn1lOux'
 genius = lyricsgenius.Genius(genius_TOKEN)
@@ -20,6 +20,8 @@ movies = pd.read_csv('app/irsystem/merged_data.csv')
 num_movies = len(movies)
 #inv_idx = np.load('app/irsystem/inv_idx.npy',allow_pickle='TRUE').item()
 norms = np.loadtxt('app/irsystem/norms.csv', delimiter=',')
+with open('inv_idx.pkl', 'rb') as f:
+     inv_idx = pickle.load(f)
 
 
 def get_data(artist, song, movie):
@@ -31,8 +33,6 @@ def get_data(artist, song, movie):
     pos = neg = ''
     if song != '':
         output.append(music_result.title+' by '+music_result.artist)
-        #output.append('Song: '+music_result.title)
-        #output.append('Artist: '+music_result.artist)
         sentiment = analyzer.polarity_scores(music_result.lyrics)
         pos = sentiment['pos']
         neg = sentiment['neg']
