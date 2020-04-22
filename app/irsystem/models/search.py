@@ -30,33 +30,42 @@ def get_data(artist, song, movie):
     music_result = find_music(artist, song)
     pos = neg = ''
     if song != '':
-        output.append('Song: '+music_result.title)
-        output.append('Artist: '+music_result.artist)
-        output.append('----------------')
+        output.append(music_result.title+' by '+music_result.artist)
+        #output.append('Song: '+music_result.title)
+        #output.append('Artist: '+music_result.artist)
         sentiment = analyzer.polarity_scores(music_result.lyrics)
         pos = sentiment['pos']
         neg = sentiment['neg']
+        neu = sentiment['neu']
     else:
         output.append('Artist: '+music_result.name)
         output.append('----------------')
         output.append('Top 3 Songs for this artist:')
         i = 1
-        pos = neg = 0
+        pos = neg = neu = 0
         for x in music_result.songs:
             output.append(str(i) + '. ' + x.title)
             sentiment = analyzer.polarity_scores(x.lyrics)
             pos += sentiment['pos']
             neg += sentiment['neg']
+            neu += sentiment['neu']
             i += 1
         pos = pos/3
         neg = neg/3
-        output.append('----------------')
+        neu = neu/3
     #movies = listify(movies)
+    output.append('----------------')
+    pos_p = str(round(pos*100,2))
+    neg_p = str(round(neg*100,2))
+    neu_p = str(round(neu*100,2))
+    s = 'Your music choice is '+pos_p+'% positive, '+neg_p+'% negative, and '\
+    +neu_p+'% neutral'
+    output.append(s)
+    output.append('----------------')
     idf = compute_idf(inv_idx,num_movies)
     output.append('Movie: ' + movie_result[0])
     output.append('----------------')
     output.append('Your Movie Recommendations Are:')
-    output.append('----------------')
     results = index_search(movie_result[1],idf)
     ten = get_10(movie_result[0],results)
     output = output + ten
@@ -153,16 +162,23 @@ def index_search(query,idf):
     q_norm = math.sqrt(q_norm_sq)
     new_scores = [score/q_norm for score in scores]
     result = sorted(tuple(zip(new_scores, docs)),reverse=True)
-    return result[:10]
+    return result[:50]
+
+
+def weigh_score(sent,cosim,rating,w1,w2,w3):
+    #total = 0
+    #dist.append(math.sqrt((pos - c[0])**2 + (neg - c[1])**2))
 
 
 def get_10(movie,results):
     ten = []
-    for (sim, ind) in results:
+    i = 1
+    for (sim, ind) in results[:10]:
         if movies['Title'][ind] != movie:
+            ten.append(str(i)+'.')
             ten.append(movies['Title'][ind])
             ten.append('Score: '+str(sim))
-            ten.append('----------------')
+            i+=1
     return ten
 
 
