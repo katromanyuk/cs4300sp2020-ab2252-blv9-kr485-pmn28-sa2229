@@ -160,8 +160,8 @@ def get_scores(query,dists):
     q_norm = math.sqrt(q_norm_sq)
     scores = np.asarray([score/q_norm for score in scores])
     dists = np.asarray(dists)
-    ratings = np.asarray(movies['Rating'])
-    total_scores = (2*scores+.15*dists+.01*ratings)
+    ratings = get_ratings()
+    total_scores = (2*scores+.15*dists+.02*ratings)
     #total_scores = (2.5*scores+1*dists)
     result = sorted(tuple(zip(total_scores, docs)),reverse=True)
     return result[:10]
@@ -204,6 +204,12 @@ def get_sent_dist(comp):
         dists.append(abs(float(c)-comp))
     dists = max(dists)*np.ones(len(dists))-dists
     return dists
+
+
+def get_ratings():
+    ratings = np.asarray(movies['Rating'])
+    ratings = ratings-5*np.ones(len(ratings))
+    return ratingss
 
 
 def print_ten(movie,results):

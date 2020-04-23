@@ -76,7 +76,7 @@ color: #4285F4;
 }
 
 .upper {
-    background-image: url("app/static/images/img1.jpg");
+    background-image: url("images/img1.jpg");
     background-size: 100% 100%;
     position: absolute;
     top:0;
@@ -85,11 +85,11 @@ color: #4285F4;
 
 /* Hide lower by default; change when search is clicked */
 .lower {
-    background-image: url("app/static/images/img2.jpg");
+    background-image:url("images/img2.jpg");
     background-size: 100% 100%;
     position: absolute;
-    width: 100%;
-    top: 100%;
+    width:100%;
+    top:100%;
     min-height: 100%;
     color: white;
 }
