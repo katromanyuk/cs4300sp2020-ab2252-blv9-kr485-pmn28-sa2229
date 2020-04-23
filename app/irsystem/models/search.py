@@ -13,30 +13,28 @@ genius_TOKEN = 'sD0C3epnJdfOQQK4eIC45dHl-Qv7DipToGpuj1n4WeuG5_LDP1HKn31w5Cn1lOux
 genius = lyricsgenius.Genius(genius_TOKEN)
 genius.verbose = False
 genius.remove_section_headers = True
-omdb_TOKEN = 'ce887dbd'
+omdb_TOKEN = '4292bf53'
 analyzer = SentimentIntensityAnalyzer()
 vectorizer = TfidfVectorizer(stop_words='english', max_features=50000, max_df=0.8, min_df=20, norm='l2')
 tokenizer = vectorizer.build_tokenizer()
 
-#inv_idx = np.load('app/inv_idx.npy',allow_pickle='TRUE').item()
-movies = pd.read_csv('app/merged_data.csv')
-num_movies = len(movies)
+
+movies = pd.read_csv('app/merged_data2.csv')
+n_mov = len(movies)
 norms = np.loadtxt('app/norms.csv', delimiter=',')
-inv_idx = pd.read_csv('app/inv_idx.csv')
+
+inv_idx = np.load('app/inv_idx.npy',allow_pickle='TRUE').item()
+idf = {x: math.log2(n_mov/(1+len(inv_idx[x]))) for x in inv_idx if len(inv_idx[x])>=20 and len(inv_idx[x])/n_mov<=0.8}
+
+'''inv_idx = pd.read_csv('app/inv_idx.csv')
 inv_idx.columns = ['word','docs','counts']
 z = tuple(zip(inv_idx['word'],inv_idx['docs']))
-idf = {a: math.log2(num_movies/(1+len(b))) for (a,b) in z if len(b)>=20 and len(b)/num_movies<=0.8}
+idf = {a: math.log2(n_mov/(1+len(b))) for (a,b) in z if len(b)>=20 and len(b)/n_mov<=0.8}
 word_to_index = {word:i for i, word in enumerate(inv_idx['word'])}
-
 docs = [d.strip('[]').split(', ') for d in inv_idx['docs']]
 inv_idx['docs'] = docs
 counts = [c.strip('[]').split(', ') for c in inv_idx['counts']]
-inv_idx['counts'] = counts
-
-#with open('app/irsystem/inv_idx.pkl', 'rb') as f:
-#     inv_idx = pickle.load(f)
-#with open('app/inv_idx.txt', 'r') as file:
-#    inv_idx = json.load(file)
+inv_idx['counts'] = counts'''
 
 
 def get_data(artist, song, movie):
@@ -47,43 +45,51 @@ def get_data(artist, song, movie):
     music_result = find_music(artist, song)
     pos = neg = ''
     if song != '':
-        output.append(music_result.title+' by '+music_result.artist)
+        output.append('Song: '+music_result.title+' by '+music_result.artist)
         sentiment = analyzer.polarity_scores(music_result.lyrics)
         pos = sentiment['pos']
         neg = sentiment['neg']
         neu = sentiment['neu']
+        comp = sentiment['compound']
     else:
         output.append('Artist: '+music_result.name)
         output.append('----------------')
         output.append('Top 3 Songs for this artist:')
         i = 1
-        pos = neg = neu = 0
+        pos = neg = neu = comp = 0
         for x in music_result.songs:
             output.append(str(i) + '. ' + x.title)
             sentiment = analyzer.polarity_scores(x.lyrics)
             pos += sentiment['pos']
             neg += sentiment['neg']
             neu += sentiment['neu']
+            comp += sentiment['compound']
             i += 1
         pos = pos/3
         neg = neg/3
         neu = neu/3
-    #movies = listify(movies)
+        comp = comp/3
+    #listify(movies)
     output.append('----------------')
     pos_p = str(round(pos*100,2))
     neg_p = str(round(neg*100,2))
     neu_p = str(round(neu*100,2))
-    s = 'Your music choice is '+pos_p+'% positive, '+neg_p+'% negative, and '\
+    s1 = 'Your music choice is '+pos_p+'% positive, '+neg_p+'% negative, and '\
     +neu_p+'% neutral'
-    output.append(s)
+    s2 = 'Your music choice has a compound sentiment of '+str(round(comp,4))\
+    +' ('+sent_type(comp)+')'
+    output.append(s1)
+    output.append(s2)
     output.append('----------------')
     output.append('Movie: ' + movie_result[0])
+    output.append('Summary: ')
+    output.append(movie_result[1])
     output.append('----------------')
     output.append('Your Movie Recommendations Are:')
-    dists = get_sent_dist(pos,neg)
-    #idf = compute_idf(inv_idx,num_movies)
-    cosims = index_search(movie_result[1])
-    ten = get_10(movie_result[0],dists,cosims)
+    #dists = get_sent_dist(pos,neg)
+    dists = get_sent_dist(comp)
+    scores = get_scores(movie_result[1], dists)
+    ten = print_ten(movie_result[0],scores)
     output = output + ten
     return output
 
@@ -146,27 +152,86 @@ def listify(df):
         languages.append(l)
         countries.append(c)
     df['Genres'] = genres
-    df['Languages'] = languages
-    df['Countries'] = countries
-    return df
+    #df['Languages'] = languages
+    #df['Countries'] = countries
 
 
-#def compute_idf(inv_idx, n_docs, min_df=20, max_df_ratio=0.8):
-#    idf = {x: math.log2(n_docs/(1+len(inv_idx[x]))) for x in inv_idx
-#           if len(inv_idx[x])>=min_df and len(inv_idx[x])/n_docs<=max_df_ratio}
-#    return idf
-
-
-def index_search(query):
-    #movie = find_movie(user_mov)
-    #query = movie[1]
-    #query = ''
-    #if movie[0] in movie_titles:
-    #    query = movies['Summary'][title_to_index[movie[0]]]
-    #else:
-    #    query = movie[1]
+def get_scores(query,dists):
     scores = np.zeros(len(norms))
-    #docs = [i for i in range(len(norms))]
+    docs = [i for i in range(len(norms))]
+    q = query.lower()
+    q_tokens = tokenizer(q)
+    q_norm_sq = 0
+    for t in set(q_tokens):
+        if t in idf:
+            q_norm_sq += (q_tokens.count(t)*idf[t])**2
+            for (doc,cnt) in inv_idx[t]:
+                scores[doc] += (q_tokens.count(t)*cnt*idf[t]**2)/norms[doc]
+    q_norm = math.sqrt(q_norm_sq)
+    scores = np.asarray([score/q_norm for score in scores])
+    dists = np.asarray(dists)
+    ratings = np.asarray(movies['Rating'])
+    total_scores = (2*scores+.15*dists+.01*ratings)
+    #total_scores = (2.5*scores+1*dists)
+    result = sorted(tuple(zip(total_scores, docs)),reverse=True)
+    return result[:10]
+
+
+def sent_type(sent):
+    res = ''
+    if sent < -.95:
+        res = 'extremely negative'
+    elif sent < -.75:
+        res = 'very negative'
+    elif sent < -.3:
+        res = 'negative'
+    elif sent < -.05:
+        res = 'slightly negative'
+    elif sent < .05:
+        res = 'neutral'
+    elif sent < .3:
+        res = 'slightly positive'
+    elif sent < .75:
+        res = 'positive'
+    elif sent < .95:
+        res = 'very positive'
+    else:
+        res = 'extremely positive'
+    return res
+
+
+'''def get_sent_dist(p1, n1):
+    dists = []
+    for p2,n2 in tuple(zip(movies['pos'], movies['neg'])):
+        dists.append(math.sqrt((p2 - p1)**2 + (n2 - n1)**2))
+    dists = max(dists)*np.ones(len(dists))-dists
+    return dists'''
+
+
+def get_sent_dist(comp):
+    dists = []
+    for c in movies['compound']:
+        dists.append(abs(float(c)-comp))
+    dists = max(dists)*np.ones(len(dists))-dists
+    return dists
+
+
+def print_ten(movie,results):
+    ten = []
+    i = 1
+    for (score,ind) in results:
+        if movies['Title'][ind] != movie:
+            ten.append(str(i)+'.')
+            ten.append(movies['Title'][ind])
+            ten.append('Score: '+str(score))
+            ten.append('Summary: ')
+            ten.append(movies['Summary'][ind][:400])
+            i+=1
+    return ten
+
+
+'''def index_search(query):
+    scores = np.zeros(len(norms))
     q = query.lower()
     q_tokens = tokenizer(q)
     q_norm_sq = 0
@@ -175,55 +240,21 @@ def index_search(query):
             ind = word_to_index[t]
             q_norm_sq += (q_tokens.count(t)*idf[t])**2
             for (doc,cnt) in tuple(zip(inv_idx['docs'][ind],inv_idx['counts'][ind])):
-                #print(doc,cnt)
                 doc = int(doc)
                 cnt = int(cnt)
                 scores[doc] += (q_tokens.count(t)*cnt*idf[t]**2)/norms[doc]
     q_norm = math.sqrt(q_norm_sq)
     new_scores = [score/q_norm for score in scores]
-    #pos = [x for x in movies['pos']]
-    #neg = [x for x in movies['neg']]
-    #result = sorted(tuple(zip(new_scores,docs)),reverse=True)
     result = new_scores
     return result
 
 
-def get_sent_dist(p1, n1):
-    dist = []
-    for p2,n2 in tuple(zip(movies['pos'], movies['neg'])):
-        dist.append(math.sqrt((p2 - p1)**2 + (n2 - n1)**2))
-    return dist
-
-
-#def weigh_score(cosim,pos,neg,rating,w1,w2,w3):
-    #total = 0
-    #dist.append(math.sqrt((pos - c[0])**2 + (neg - c[1])**2))
-
-
 def get_10(movie,dists,cosims):
     docs = [i for i in range(len(norms))]
-    scores = [1*float(c) - 100*float(d) for c,d in zip(dists,cosims)]
+    scores = [5*float(c) - 10*float(d) for c,d in zip(cosims,dists)]
     results = sorted(tuple(zip(scores,docs)),reverse=True)
-    ten = []
-    i = 1
-    for (score,ind) in results[:10]:
-        if movies['Title'][ind] != movie:
-            ten.append(str(i)+'.')
-            ten.append(movies['Title'][ind])
-            ten.append('Score: '+str(score))
-            i+=1
-    return ten
-
-
-
-
-
-
-
-
-
-
-
+    return results[:10]
+'''
 
 
 '''def closest_centroid(pos, neg):
