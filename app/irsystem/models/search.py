@@ -209,7 +209,7 @@ def get_sent_dist(comp):
 def get_ratings():
     ratings = np.asarray(movies['Rating'])
     ratings = ratings-5*np.ones(len(ratings))
-    return ratingss
+    return ratings
 
 
 def print_ten(movie,results):
