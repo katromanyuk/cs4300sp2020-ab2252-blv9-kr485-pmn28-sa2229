@@ -26,16 +26,6 @@ norms = np.loadtxt('app/norms.csv', delimiter=',')
 inv_idx = np.load('app/inv_idx.npy',allow_pickle='TRUE').item()
 idf = {x: math.log2(n_mov/(1+len(inv_idx[x]))) for x in inv_idx if len(inv_idx[x])>=20 and len(inv_idx[x])/n_mov<=0.8}
 
-'''inv_idx = pd.read_csv('app/inv_idx.csv')
-inv_idx.columns = ['word','docs','counts']
-z = tuple(zip(inv_idx['word'],inv_idx['docs']))
-idf = {a: math.log2(n_mov/(1+len(b))) for (a,b) in z if len(b)>=20 and len(b)/n_mov<=0.8}
-word_to_index = {word:i for i, word in enumerate(inv_idx['word'])}
-docs = [d.strip('[]').split(', ') for d in inv_idx['docs']]
-inv_idx['docs'] = docs
-counts = [c.strip('[]').split(', ') for c in inv_idx['counts']]
-inv_idx['counts'] = counts'''
-
 
 def get_data(artist, song, movie):
     output = []
@@ -230,138 +220,12 @@ def print_ten(movie,results):
     return ten
 
 
-'''def index_search(query):
-    scores = np.zeros(len(norms))
-    q = query.lower()
-    q_tokens = tokenizer(q)
-    q_norm_sq = 0
-    for t in set(q_tokens):
-        if t in idf:
-            ind = word_to_index[t]
-            q_norm_sq += (q_tokens.count(t)*idf[t])**2
-            for (doc,cnt) in tuple(zip(inv_idx['docs'][ind],inv_idx['counts'][ind])):
-                doc = int(doc)
-                cnt = int(cnt)
-                scores[doc] += (q_tokens.count(t)*cnt*idf[t]**2)/norms[doc]
-    q_norm = math.sqrt(q_norm_sq)
-    new_scores = [score/q_norm for score in scores]
-    result = new_scores
-    return result
-
-
-def get_10(movie,dists,cosims):
-    docs = [i for i in range(len(norms))]
-    scores = [5*float(c) - 10*float(d) for c,d in zip(cosims,dists)]
-    results = sorted(tuple(zip(scores,docs)),reverse=True)
-    return results[:10]
-'''
-
-
-'''def closest_centroid(pos, neg):
-    dist = []
-    for c in centroids:
-        dist.append(math.sqrt((pos - c[0])**2 + (neg - c[1])**2))
-    index = dist.index(min(dist))
-    return index
-
-def get_movie_cluster(label, movies):
-    has_label = movies['k=5']==label
-    filtered_movies = movies[has_label]
-    return filtered_movies
-
-def create_mov_to_id(data):
-    movie_to_id = {}
-    for t, title in enumerate(data['Title']):
-        wiki = data['WikiID'][t]
-        movie_to_id[title] = wiki
-    return movie_to_id
-
-def create_id_to_ind(data):
-    id_to_index = {}
-    for i, wikiid in enumerate(data['WikiID']):
-        id_to_index[wikiid] = i
-    return id_to_index
-
-def get_summary(movie, data, movie_to_id, id_to_index):
-    wiki_id = movie_to_id.get(movie)
-    ind = id_to_index.get(wiki_id)
-    summary = data['Summary'][ind]
-    return summary
-
-def sorted_top10(movie, data, movie_to_id, id_to_index):
-    top10 = get_top10(movie, data, movie_to_id, id_to_index)
-    top10 = sorted(top10.items(), key=lambda x: x[1], reverse=True)
-    sorted10 = []
-    for info in top10:
-        wiki = info[0]
-        ind = id_to_index.get(wiki)
-        title = data['Title'][ind]
-        sorted10.append(title)
-    return sorted10
-
-def get_top10(movie, data, movie_to_id, id_to_index):
-    top_movie = {}
-    name = movie[0]
-    arr = compare_sim(movie, data, movie_to_id, id_to_index)
-    wiki_id1 = -1
-    if name in movie_to_id:
-        wiki_id1 = movie_to_id.get(name)
-    top_indices = np.argpartition(-arr, 11)
-    list_of_ind = top_indices[:11]
-    for ind in list_of_ind:
-        title = data['Title'][ind]
-        wiki_id2 = data['WikiID'][ind]
-        if title != name:
-            top_movie[wiki_id2] = arr[ind]
-    return top_movie
-
-def compare_sim(movie, data, movie_to_id, id_to_index):
-    name = movie[0]
-    plot = movie[1]
-    wiki_id1 = movie_to_id.get(name)
-    arr = np.zeros(len(data))
-    for wiki_id2 in data['WikiID']:
-        ind = id_to_index.get(wiki_id2)
-        movie2 = data['Title'][ind]
-        if wiki_id2 == wiki_id1:
-            value = 1
-        else:
-            plot2 = get_summary(movie2, data, movie_to_id, id_to_index)
-            value = get_sim(plot, plot2, data, movie_to_id, id_to_index)
-        arr[ind] = value
-    return arr
-
-def get_sim2(plot1, plot2, data, movie_to_id, id_to_index):
-    doc = [plot1, plot2]
-    tfidf = vectorizer.fit_transform(doc)
-    return cosine_similarity(tfidf)[0][1]
-
-def get_genres(movie, data, movie_to_id, id_to_index):
-    wiki_id = movie_to_id.get(movie)
-    ind = id_to_index.get(wiki_id)
-    genre = data['Genres'][ind]
-    return genre
-
-def get_pos(movie, data, movie_to_id, id_to_index):
-    wiki_id = movie_to_id.get(movie)
-    ind = id_to_index.get(wiki_id)
-    pos = data['pos'][ind]
-    return pos
-
-def get_neg(movie, data, movie_to_id, id_to_index):
-    wiki_id = movie_to_id.get(movie)
-    ind = id_to_index.get(wiki_id)
-    neg = data['neg'][ind]
-    return neg
-
-def get_neu(movie, data, movie_to_id, id_to_index):
-    wiki_id = movie_to_id.get(movie)
-    ind = id_to_index.get(wiki_id)
-    neu = data['neu'][ind]
-    return neu
-
-def get_compound(movie, data, movie_to_id, id_to_index):
-    wiki_id = movie_to_id.get(movie)
-    ind = id_to_index.get(wiki_id)
-    comp = data['compound'][ind]
-    return comp'''
+'''inv_idx = pd.read_csv('app/inv_idx.csv')
+inv_idx.columns = ['word','docs','counts']
+z = tuple(zip(inv_idx['word'],inv_idx['docs']))
+idf = {a: math.log2(n_mov/(1+len(b))) for (a,b) in z if len(b)>=20 and len(b)/n_mov<=0.8}
+word_to_index = {word:i for i, word in enumerate(inv_idx['word'])}
+docs = [d.strip('[]').split(', ') for d in inv_idx['docs']]
+inv_idx['docs'] = docs
+counts = [c.strip('[]').split(', ') for c in inv_idx['counts']]
+inv_idx['counts'] = counts'''
