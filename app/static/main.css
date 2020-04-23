@@ -85,7 +85,7 @@ color: #4285F4;
 
 /* Hide lower by default; change when search is clicked */
 .lower {
-    background-image:url("images/img2.jpg");
+    background-image:url("images/img3.jpg");
     background-size: 100% 100%;
     position: absolute;
     width:100%;
@@ -95,7 +95,7 @@ color: #4285F4;
 }
 
 #submit {
-    background-color: rgb(10, 170, 230);
+    background-color: #89CEEE;
     width:80px;
     height:80px;
     border-radius: 40px;
@@ -105,11 +105,11 @@ color: #4285F4;
 }
 
 #submit:hover {
-    background-color: #1DB954;
+    background-color: #B4E9EC;
 }
 
 #topbtn {
-    background-color: rgb(10, 170, 230);
+    background-color: #89CEEE;
     border:none;
     color:black;
     position: relative;
@@ -124,7 +124,7 @@ color: #4285F4;
 }
 
 #topbtn:hover {
-    background-color: #1DB954;
+    background-color: #B4E9EC;
 }
 
 .lower h1 {

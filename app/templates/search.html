@@ -1,62 +1,90 @@
-<html>
+<html lang="en">
 
 <head>
+    <!-- read more button code from https://www.tutorialrepublic.com/faq/show-read-more-link-if-the-text-exceeds-a-certain-length-using-jquery.php -->
+    <meta charset="utf-8">
+    <title>Melodic Monkey Movies</title>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var maxLength = 300;
+            $(".show-read-more").each(function () {
+                var myStr = $(this).text();
+                if ($.trim(myStr).length > maxLength) {
+                    var newStr = myStr.substring(0, maxLength);
+                    var removedStr = myStr.substring(maxLength, $.trim(myStr).length);
+                    $(this).empty().html(newStr);
+                    $(this).append(' <a href="javascript:void(0);" class="read-more">read more...</a>');
+                    $(this).append('<span class="more-text">' + removedStr + '</span>');
+                }
+            });
+            $(".read-more").click(function () {
+                $(this).siblings(".more-text").contents().unwrap();
+                $(this).remove();
+            });
+        });
+    </script>
+    <style>
+        .show-read-more .more-text {
+            display: none;
+        }
+    </style>
     <link rel="stylesheet" href="/static/bootstrap.min.css">
     <link rel="stylesheet" href="/static/main.css">
 </head>
 
 <body>
-<section class="upper">
-    <div class="topcorner">
-        <p>Project Name: {{ name }}</p>
-        <p>Student Names: ({{ netid }})</p>
-    </div>
-    <form class="form-inline global-search" id="searchForm" novalidate>
-        <h1 style="font-size: 55px; font-family:Futura; color: #1DB954">
-            Melodic Monkeys Movies
-        </h1>
-
-        <br><br>
-        <!-- Add responsive feedback for required fields -->
-        <!-- form validation using python: render_template value testing inputs -->
-        <div class="form-group">
-            <input id="input" type="text" name="search1" class="form-control"
-                placeholder="Enter an artist you like" required>
+    <section class="upper">
+        <div class="topcorner">
+            <p>Project Name: {{ name }}</p>
+            <p>Student Names: ({{ netid }})</p>
         </div>
+        <form class="form-inline global-search" id="searchForm" novalidate>
+            <h1 style="font-size: 55px; font-family:Futura; color: #B4E9EC">
+                Melodic Monkeys Movies
+            </h1>
 
-        <div class="form-group">
-            <input id="input" type="text" name="search2" class="form-control"
-                placeholder="(Optional) Enter a song by this artist">
-        </div>
+            <br><br>
+            <!-- Add responsive feedback for required fields -->
+            <!-- form validation using python: render_template value testing inputs -->
+            <div class="form-group">
+                <input id="input" type="text" name="search1" class="form-control"
+                       placeholder="Enter an artist you like" required>
+            </div>
 
-        <div class="form-group">
-            <input id="input" type="text" name="search3" class="form-control"
-                placeholder="Enter the title of a movie you like" required>
-        </div>
-        <br><br>
-        <button type="submit" id="submit" class="btn btn-info">Search</button>
-    </form>
-</section>
+            <div class="form-group">
+                <input id="input" type="text" name="search2" class="form-control"
+                       placeholder="(Optional) Enter a song by this artist">
+            </div>
 
-<section class="lower" id="results">
-    <form class="form-inline global-search">
-        {% if data %}
-        <h1 style="font-size: 40px; font-family:Futura; color: #1DB954">{{output_message}}</h1>
-        {% for d in data %}
-        <br>
-        <p style="font-size: 24px; color:white;">{{d}}</p>
-        {% endfor %}
-        {% endif %}
-    </form>
-    <button onclick="topFunction()" id="topbtn">Search Again</button>
-    <script>
-        function topFunction() {
-            document.body.scrollTop = 0;
-            document.documentElement.scrollTop = 0;
-        }
-    </script>
+            <div class="form-group">
+                <input id="input" type="text" name="search3" class="form-control"
+                       placeholder="Enter the title of a movie you like" required>
+            </div>
+            <br><br>
+            <button type="submit" id="submit" class="btn btn-info">Search</button>
+        </form>
+    </section>
 
-</section>
+    <section class="lower" id="results">
+        <form class="form-inline global-search">
+            {% if data %}
+            <h1 style="font-size: 32px; font-family:Futura; color: #B4E9EC">{{output_message}}</h1>
+            {% for d in data %}
+            <br>
+            <p class="show-read-more"; p style="font-size: 18px; color:white;">{{d}}</p>
+            {% endfor %}
+            {% endif %}
+        </form>
+        <button onclick="topFunction()" id="topbtn">Search Again</button>
+        <script>
+            function topFunction() {
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
+            }
+        </script>
+
+    </section>
 
 </body>
 

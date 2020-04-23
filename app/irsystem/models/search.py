@@ -225,7 +225,7 @@ def print_ten(movie,results):
             ten.append(movies['Title'][ind])
             ten.append('Score: '+str(score))
             ten.append('Summary: ')
-            ten.append(movies['Summary'][ind][:400])
+            ten.append(movies['Summary'][ind])#[:400]+'...')
             i+=1
     return ten
 
