@@ -27,7 +27,7 @@ def search():
             string+=quote
         output_message = string
 
-        data = get_data(artist, song, movie)
+        data = get_data(artist, song, movie, quote)
     else:
         data = []
         output_messgae = "While all the other fields are optional, a movie is required. Please try again!"
