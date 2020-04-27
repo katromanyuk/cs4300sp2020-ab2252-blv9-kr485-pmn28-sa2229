@@ -15,6 +15,7 @@ def search():
     movie = request.args.get('search3')
     quote = request.args.get('search4')
     string = 'Your search: '
+    output_message = ''
     if movie:
         if artist:
             string+=artist
@@ -29,5 +30,5 @@ def search():
         data = get_data(artist, song, movie)
     else:
         data = []
-        output_messgae = "While all the other fields are optional, a movie is required. Please retry!"
+        output_messgae = "While all the other fields are optional, a movie is required. Please try again!"
     return render_template('search.html', name=project_name, netid=net_id, output_message=output_message, data=data)
