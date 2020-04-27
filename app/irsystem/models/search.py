@@ -124,7 +124,7 @@ def get_data(artist, song, movie, quote):
     return output
 
 def getquote(quote):
-    sentiment = analyzer.polarity_scores(x.lyrics)
+    sentiment = analyzer.polarity_scores(quote)
     pos = sentiment['pos']
     neg = sentiment['neg']
     neu = sentiment['neu']
