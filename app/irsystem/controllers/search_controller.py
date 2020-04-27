@@ -14,17 +14,17 @@ def search():
     song = request.args.get('search2')
     movie = request.args.get('search3')
     quote = request.args.get('search4')
-    string = 'Your search: '
+    st = 'Your search: '
     output_message = ''
     if movie:
-        string+= (movie + " ")
+        st+= (movie + " ")
         if artist:
-            string+= (artist + " ")
+            st+= (artist + " ")
         if song:
-            string+= (song + " ")
+            st+= (song + " ")
         if quote:
-            string+= (quote + " ")
-        output_message.append(string)
+            st+= (quote + " ")
+        output_message = st
 
         data = get_data(artist, song, movie, quote)
     else:
