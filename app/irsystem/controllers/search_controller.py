@@ -18,14 +18,14 @@ def search():
     output_message = ''
     if movie:
         if artist:
-            string+=artist
+            string+= (artist + " ")
         if song:
-            string+= song
+            string+= (song + " ")
         if movie:
-            string+=movie
+            string+= (movie + " ")
         if quote:
-            string+=quote
-        output_message = string
+            string+= (quote + " ")
+        output_message.append(string)
 
         data = get_data(artist, song, movie, quote)
     else:
