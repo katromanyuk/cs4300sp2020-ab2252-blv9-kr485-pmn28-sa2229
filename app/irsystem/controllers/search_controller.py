@@ -17,12 +17,11 @@ def search():
     string = 'Your search: '
     output_message = ''
     if movie:
+        string+= (movie + " ")
         if artist:
             string+= (artist + " ")
         if song:
             string+= (song + " ")
-        if movie:
-            string+= (movie + " ")
         if quote:
             string+= (quote + " ")
         output_message.append(string)
