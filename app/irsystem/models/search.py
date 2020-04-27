@@ -19,7 +19,7 @@ vectorizer = TfidfVectorizer(stop_words='english', max_features=50000, max_df=0.
 tokenizer = vectorizer.build_tokenizer()
 
 
-movies = pd.read_csv('app/merged_data2.csv')
+movies = pd.read_csv('app/merged_data3.csv')
 n_mov = len(movies)
 norms = np.loadtxt('app/norms.csv', delimiter=',')
 
