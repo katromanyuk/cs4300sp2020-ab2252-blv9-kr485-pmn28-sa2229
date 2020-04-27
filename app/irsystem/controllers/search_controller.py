@@ -14,20 +14,19 @@ def search():
     song = request.args.get('search2')
     movie = request.args.get('search3')
     quote = request.args.get('search4')
-    string = 'Your search: '
+    st = 'Your search: '
     output_message = ''
     if movie:
+        st+= (movie + " ")
         if artist:
-            string+=artist
+            st+= (artist + " ")
         if song:
-            string+= song
-        if movie:
-            string+=movie
+            st+= (song + " ")
         if quote:
-            string+=quote
-        output_message = string
+            st+= (quote + " ")
+        output_message = st
 
-        data = get_data(artist, song, movie)
+        data = get_data(artist, song, movie, quote)
     else:
         data = []
         output_messgae = "While all the other fields are optional, a movie is required. Please try again!"

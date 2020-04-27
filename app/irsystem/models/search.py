@@ -35,7 +35,7 @@ def get_data(artist, song, movie, quote):
     music_result = find_music(artist, song)
     if song != '' and artist!= '':
         output.append('Song: '+music_result[0].title+' by '+music_result[0].artist)
-        sentiment = analyzer.polarity_scores(music_result.lyrics)
+        sentiment = analyzer.polarity_scores(music_result[0].lyrics)
         pos = sentiment['pos']
         neg = sentiment['neg']
         neu = sentiment['neu']
@@ -44,7 +44,7 @@ def get_data(artist, song, movie, quote):
         output.append('----------------')
         output.append('Top 3 Songs for this artist:')
         i = 1
-        for x in music_result.songs:
+        for x in music_result[1].songs:
             output.append(str(i) + '. ' + x.title)
             sentiment = analyzer.polarity_scores(x.lyrics)
             pos += sentiment['pos']
@@ -124,12 +124,12 @@ def get_data(artist, song, movie, quote):
     return output
 
 def getquote(quote):
-    sentiment = analyzer.polarity_scores(x.lyrics)
+    sentiment = analyzer.polarity_scores(quote)
     pos = sentiment['pos']
     neg = sentiment['neg']
     neu = sentiment['neu']
     comp = sentiment['compound']
-    return ([pos, neg, new, comp])
+    return ([pos, neg, neu, comp])
 
 def find_music(artist, song=''):
     if song != '' and artist != '':
