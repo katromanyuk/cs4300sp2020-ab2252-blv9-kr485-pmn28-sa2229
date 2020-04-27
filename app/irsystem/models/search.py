@@ -129,7 +129,7 @@ def getquote(quote):
     neg = sentiment['neg']
     neu = sentiment['neu']
     comp = sentiment['compound']
-    return ([pos, neg, new, comp])
+    return ([pos, neg, neu, comp])
 
 def find_music(artist, song=''):
     if song != '' and artist != '':
