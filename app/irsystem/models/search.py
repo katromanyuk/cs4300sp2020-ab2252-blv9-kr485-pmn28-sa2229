@@ -273,8 +273,7 @@ def print_ten(movie,results):
             ten.append('Score: '+str(score))
             ten.append('Summary: ')
             ten.append(movies['Summary'][ind])#[:400]+'...')
-            ten.append('Streaming Services: ')
-            ten.append(movies['Streaming Services'][ind])
+            ten.append('Streaming Services: ' + (movies['Streaming Services'][ind]))
             i+=1
     return ten
 
