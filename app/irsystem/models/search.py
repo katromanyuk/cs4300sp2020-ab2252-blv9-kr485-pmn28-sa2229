@@ -33,14 +33,15 @@ def get_data(artist, song, movie):
     if movie_result=='ERROR':
         return ['We did not find the movie you searched for. Did you spell it correctly?']
     music_result = find_music(artist, song)
-    if song != '' and artist != '':
+    pos = neg = ''
+    if song != '':
         output.append('Song: '+music_result.title+' by '+music_result.artist)
         sentiment = analyzer.polarity_scores(music_result.lyrics)
         pos = sentiment['pos']
         neg = sentiment['neg']
         neu = sentiment['neu']
         comp = sentiment['compound']
-    elif artist != '':
+    else:
         output.append('Artist: '+music_result.name)
         output.append('----------------')
         output.append('Top 3 Songs for this artist:')
@@ -58,19 +59,6 @@ def get_data(artist, song, movie):
         neg = neg/3
         neu = neu/3
         comp = comp/3
-    elif song != '':
-        output.append('Song: '+music_result.title+' by '+music_result.artist)
-        sentiment = analyzer.polarity_scores(music_result.lyrics)
-        pos = sentiment['pos']
-        neg = sentiment['neg']
-        neu = sentiment['neu']
-        comp = sentiment['compound']
-    else:
-        pos = 0
-        neg = 0
-        neu = 0
-        comp = 0
-    
     #listify(movies)
     output.append('----------------')
     pos_p = str(round(pos*100,2))
