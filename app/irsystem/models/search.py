@@ -117,7 +117,7 @@ def find_music(artist= '', song=''):
         result = ''
     return result
 
-def getquote(quote):
+def getquote(quote= ''):
     sentiment = analyzer.polarity_scores(quote)
     pos = sentiment['pos']
     neg = sentiment['neg']
