@@ -27,36 +27,21 @@ inv_idx = np.load('app/inv_idx.npy',allow_pickle='TRUE').item()
 idf = {x: math.log2(n_mov/(1+len(inv_idx[x]))) for x in inv_idx if len(inv_idx[x])>=20 and len(inv_idx[x])/n_mov<=0.8}
 
 
-def get_data(artist, song, movie, quote):
+def get_data(artist, song, movie):
     output = []
     movie_result = find_movie(movie)
     if movie_result=='ERROR':
-        return['We could not find this movie. Are you sure you spelled it correctly?']
+        return ['We did not find the movie you searched for. Did you spell it correctly?']
     music_result = find_music(artist, song)
-    if music_result is not None and song != '' and artist!= '':
-        output.append('Song: '+music_result[0].title+' by '+music_result[0].artist)
-        sentiment = analyzer.polarity_scores(music_result[0].lyrics)
+    pos = neg = ''
+    if song != '':
+        output.append('Song: '+music_result.title+' by '+music_result.artist)
+        sentiment = analyzer.polarity_scores(music_result.lyrics)
         pos = sentiment['pos']
         neg = sentiment['neg']
         neu = sentiment['neu']
         comp = sentiment['compound']
-        output.append('Artist: '+music_result[1].name)
-        output.append('----------------')
-        output.append('Top 3 Songs for this artist:')
-        i = 1
-        for x in music_result[1].songs:
-            output.append(str(i) + '. ' + x.title)
-            sentiment = analyzer.polarity_scores(x.lyrics)
-            pos += sentiment['pos']
-            neg += sentiment['neg']
-            neu += sentiment['neu']
-            comp += sentiment['compound']
-            i += 1
-        pos = pos/4
-        neg = neg/4
-        neu = neu/4
-        comp = comp/4
-    elif music_result is not None and artist != '':
+    else:
         output.append('Artist: '+music_result.name)
         output.append('----------------')
         output.append('Top 3 Songs for this artist:')
@@ -74,32 +59,7 @@ def get_data(artist, song, movie, quote):
         neg = neg/3
         neu = neu/3
         comp = comp/3
-    elif music_result is not None and song != '':
-        output.append('Song: '+music_result[0].title+' by '+music_result[0].artist)
-        sentiment = analyzer.polarity_scores(music_result.lyrics)
-        pos = sentiment['pos']
-        neg = sentiment['neg']
-        neu = sentiment['neu']
-        comp = sentiment['compound']
-    else:
-        pos =0
-        neg = 0
-        neu = 0
-        comp = 0
-    
-
     #listify(movies)
-    if quote != '':
-        sentiment2 = getquote(quote)
-        pos+=sentiment2[0]
-        neg+=sentiment2[1]
-        neu+=sentiment2[2]
-        comp+=sentiment2[3]
-        pos=pos/2
-        neg = neg/2
-        neu = neu/2
-        comp = comp/2
-
     output.append('----------------')
     pos_p = str(round(pos*100,2))
     neg_p = str(round(neg*100,2))
@@ -123,23 +83,12 @@ def get_data(artist, song, movie, quote):
     output = output + ten
     return output
 
-def getquote(quote):
-    sentiment = analyzer.polarity_scores(quote)
-    pos = sentiment['pos']
-    neg = sentiment['neg']
-    neu = sentiment['neu']
-    comp = sentiment['compound']
-    return ([pos, neg, neu, comp])
 
 def find_music(artist, song=''):
-    if song != '' and artist != '':
-        result = [genius.search_song(song), genius.search_artist(artist, max_songs=3)]
-    elif artist != '':
-        result = genius.search_artist(artist, max_songs=3)
-    elif song != '':
-        result = genius.search_song(song)
+    if song != '':
+        result = genius.search_song(song, artist)
     else:
-        result = None
+        result = genius.search_artist(artist, max_songs=3)
     return result
 
 
