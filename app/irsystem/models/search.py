@@ -111,9 +111,9 @@ def get_data(artist, song, movie, quote):
 def find_music(artist= '', song=''):
     if song != '' and artist != '':
         result = genius.search_song(song, artist)
-    elif song == '':
+    elif artist != '':
         result = genius.search_artist(artist, max_songs=3)
-    elif artist == '':
+    elif song != '':
         result = genius.search_song(song)
     else:
         result = ''
