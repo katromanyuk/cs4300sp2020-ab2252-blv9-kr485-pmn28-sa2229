@@ -13,13 +13,14 @@ def search():
     artist = request.args.get('search1')
     song = request.args.get('search2')
     movie = request.args.get('search3')
-    if not artist or not movie:
+    if not movie:
         output_message = ''
         data = ['Please give us at least an artist and movie!']
     else:
-        if not song:
-            output_message = 'Your search: '+artist+', '+movie
-        else:
-            output_message = 'Your search: '+artist+', '+song+', '+movie
+        output_message = "Your Search: " + movie + " "
+        if artist:
+            output_message+= artist+ ' '
+        if song:
+            output_message+= song + ' '
         data = get_data(artist, song, movie)
     return render_template('search.html', name=project_name, netid=net_id, output_message=output_message, data=data)
