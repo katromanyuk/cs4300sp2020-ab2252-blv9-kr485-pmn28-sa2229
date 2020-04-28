@@ -27,7 +27,7 @@ inv_idx = np.load('app/inv_idx.npy',allow_pickle='TRUE').item()
 idf = {x: math.log2(n_mov/(1+len(inv_idx[x]))) for x in inv_idx if len(inv_idx[x])>=20 and len(inv_idx[x])/n_mov<=0.8}
 
 
-def get_data(artist, song, movie):
+def get_data(artist, song, movie, quote):
     output = []
     movie_result = find_movie(movie)
     if movie_result=='ERROR':
@@ -70,6 +70,15 @@ def get_data(artist, song, movie):
         neg = 0
         neu = 0
         comp = 0
+    
+    if quote != '':
+        val = getquote(quote)
+        pos += val[0]
+        neg += val[1]
+        neu += val[2]
+        comp += val[3]
+
+
 
 
     #listify(movies)
@@ -107,6 +116,14 @@ def find_music(artist= '', song=''):
     else:
         result = ''
     return result
+
+def getquote(quote):
+    sentiment = analyzer.polarity_scores(quote)
+    pos = sentiment['pos']
+    neg = sentiment['neg']
+    neu = sentiment['neu']
+    comp = sentiment['compound']
+    return [pos, neg, neu, comp]
 
 
 def find_movie(movie):
