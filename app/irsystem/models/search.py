@@ -27,7 +27,7 @@ inv_idx = np.load('app/inv_idx.npy',allow_pickle='TRUE').item()
 idf = {x: math.log2(n_mov/(1+len(inv_idx[x]))) for x in inv_idx if len(inv_idx[x])>=20 and len(inv_idx[x])/n_mov<=0.8}
 
 
-def get_data(artist, song, movie, quote):
+def get_data(artist, song, movie):
     output = []
     movie_result = find_movie(movie)
     if movie_result=='ERROR':
@@ -71,18 +71,18 @@ def get_data(artist, song, movie, quote):
         neu = 0
         comp = 0
 
-    if quote != '':
-        val = getquote(quote)
-        pos+=val[0]
-        neg+=val[1]
-        neu+=val[2]
-        comp+=val[3]
+    #if quote != '':
+       # val = getquote(quote)
+       # pos+=val[0]
+        #neg+=val[1]
+        #neu+=val[2]
+        #comp+=val[3]
 
-        pos = pos/2
-        neg = neg/2
-        neu = neu/2
-        comp = comp/2
-
+        #pos = pos/2
+        #neg = neg/2
+        #neu = neu/2
+        #comp = comp/2
+#
     #listify(movies)
     output.append('----------------')
     pos_p = str(round(pos*100,2))
