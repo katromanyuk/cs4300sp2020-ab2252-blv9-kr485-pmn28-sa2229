@@ -27,7 +27,7 @@ inv_idx = np.load('app/inv_idx.npy',allow_pickle='TRUE').item()
 idf = {x: math.log2(n_mov/(1+len(inv_idx[x]))) for x in inv_idx if len(inv_idx[x])>=20 and len(inv_idx[x])/n_mov<=0.8}
 
 
-def get_data(artist, song, movie):
+def get_data(artist, song, movie, quote):
     output = []
     movie_result = find_movie(movie)
     if movie_result=='ERROR':
