@@ -48,13 +48,13 @@
             <!-- Add responsive feedback for required fields -->
             <!-- form validation using python: render_template value testing inputs -->
             <div class="form-group">
-                <input id="input" type="text" name="search1" class="form-control"
-                    placeholder="Enter an artist you like">
+                <input id="input" type="text" name="search1" class="form-control" placeholder="Enter an artist you like"
+                    required>
             </div>
 
             <div class="form-group">
                 <input id="input" type="text" name="search2" class="form-control"
-                    placeholder="(Optional) Enter a song by this artist">
+                    placeholder="(Optional) Enter a song by this artist" required>
             </div>
 
             <div class="form-group">
@@ -63,7 +63,7 @@
             </div>
             <div class="form-group">
                 <input id="input" type="text" name="search4" class="form-control"
-                    placeholder="Enter a quote that reflects your current mood">
+                    placeholder="Enter a quote that reflects your current mood" required>
             </div>
             <br><br>
             <button type="submit" id="submit" class="btn btn-info">Search</button>

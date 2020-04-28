@@ -18,12 +18,12 @@ def search():
         output_message = ''
         data = ['Please give us at least a movie!']
     else:
-        output_message = 'Your Search: ' + movie + ' '
-        if song:
-            output_message+= song + " "
-        if artist:
-            output_message+= artist + " "
-        if quote:
-            output_message+= quote + " "
+        output_message = 'Your Search: ' + movie
+        #if song:
+           # output_message+= song + " "
+       # if artist:
+            #output_message+= artist + " "
+        #if quote:
+           # output_message+= quote + " "
         data = get_data(artist, song, movie, quote)
     return render_template('search.html', name=project_name, netid=net_id, output_message=output_message, data=data)
