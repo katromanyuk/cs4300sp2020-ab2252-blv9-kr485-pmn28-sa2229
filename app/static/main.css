@@ -1,5 +1,5 @@
 html {
-    font-family: futura;
+    font-family: Futura;
 }
 
 @media (min-width: 1200px) {
@@ -127,9 +127,54 @@ color: #4285F4;
     background-color: #B4E9EC;
 }
 
-.lower h1 {
+.lower h1, h3 {
     background-color: rgb(10, 170, 230, 0.7);
     border-radius: 20px;
     padding:10px;
     text-shadow: 2px 2px 5px black;
+    text-align: center;
+    font-style: italic;
+    color:#B4E9EC;
+    display: inline-block
+}
+
+.table {
+    border:3px solid white;
+    color: #B4E9EC;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin-left: 10%;
+    margin-right: 10%;
+    width:auto;
+    margin-bottom:40px;
+}
+
+th {
+    text-align: center;
+    vertical-align: middle;
+    border:1px solid white;
+    color: #B4E9EC;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px black;
+}
+
+td {
+    color: white;
+    border: 1px solid white;
+}
+
+.read-more {
+    color:#B4E9EC;
+}
+
+.read-more:hover {
+    color:white;
+}
+
+.hidden {
+    display:none;
+}
+
+.header-bubbles {
+    text-align: center;
 }

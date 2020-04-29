@@ -96,14 +96,15 @@ def get_data(artist, song, movie, quote):
     output.append('Movie: ' + movie_result[0])
     output.append('Summary: ')
     output.append(movie_result[1])
-    output.append('----------------')
-    output.append('Your Movie Recommendations Are:')
+    # output.append('----------------')
+    # output.append('Your Movie Recommendations Are:')
     #dists = get_sent_dist(pos,neg)
     dists = get_sent_dist(comp)
     scores = get_scores(movie_result[1], dists)
     ten = print_ten(movie_result[0],scores)
-    output = output + ten
+    output = [output] + ten
     return output
+
 
 
 def find_music(artist= '', song=''):
@@ -164,18 +165,18 @@ def response(result):
     return text.find('True') > -1
 
 
-def listify(df):
-    genres = []
-    languages = []
-    countries = []
-    for x,y,z in zip(df['Genres'],df['Languages'],df['Countries']):
-        g = re.findall(': \"(.*?)\"', x)
-        l = re.findall(': \"(.*?)\"', y)
-        c = re.findall(': \"(.*?)\"', z)
-        genres.append(g)
-        languages.append(l)
-        countries.append(c)
-    df['Genres'] = genres
+# def listify(df):
+#     genres = []
+#     languages = []
+#     countries = []
+#     for x,y,z in zip(df['Genres'],df['Languages'],df['Countries']):
+#         g = re.findall(': \"(.*?)\"', x)
+#         l = re.findall(': \"(.*?)\"', y)
+#         c = re.findall(': \"(.*?)\"', z)
+#         genres.append(g)
+#         languages.append(l)
+#         countries.append(c)
+#     df['Genres'] = genres
     #df['Languages'] = languages
     #df['Countries'] = countries
 
@@ -250,14 +251,15 @@ def print_ten(movie,results):
     ten = []
     i = 1
     for (score,ind) in results:
+        entry = []
         if movies['Title'][ind] != movie:
-            ten.append(str(i)+'.')
-            ten.append(movies['Title'][ind])
-            ten.append('Score: '+str(score))
-            ten.append('Summary: ')
-            ten.append(movies['Summary'][ind])#[:400]+'...')
-            ten.append('Streaming Services: ' + (movies['Streaming Services'][ind]))
+            entry.append(str(i)+'.')
+            entry.append(movies['Title'][ind])
+            entry.append(str(round(score, 4)))
+            entry.append(movies['Summary'][ind])#[:400]+'...')
+            entry.append(movies['Streaming Services'][ind])
             i+=1
+        ten.append(entry)
     return ten
 
 

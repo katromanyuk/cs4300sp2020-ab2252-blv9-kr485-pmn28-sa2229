@@ -24,6 +24,16 @@
                 $(this).siblings(".more-text").contents().unwrap();
                 $(this).remove();
             });
+
+            var curr_url = window.location.href
+            var elmnt = document.getElementById("results");
+            if (curr_url.includes("search1")) {
+                elmnt.classList.remove("hidden")
+                elmnt.scrollIntoView(true);
+            } else {
+                elmnt.classList.add("hidden")
+            };
+
         });
     </script>
     <style>
@@ -45,8 +55,7 @@
             </h1>
 
             <br><br>
-            <!-- Add responsive feedback for required fields -->
-            <!-- form validation using python: render_template value testing inputs -->
+
             <div class="form-group">
                 <input id="input" type="text" name="search1" class="form-control"
                     placeholder="Enter an artist you like">
@@ -71,16 +80,49 @@
     </section>
 
     <section class="lower" id="results">
-        <form class="form-inline global-search">
-            {% if data %}
-            <h1 style="font-size: 32px; font-family:Futura; color: #B4E9EC">{{output_message}}</h1>
+        <div class="header-bubbles">
+            <h1>Your Search:</h1>
+        </div>
+        <br>
+
+        {% if data %}
             {% for d in data %}
-            <br>
-            <p class="show-read-more" ; p style="font-size: 18px; color:white;">{{d}}</p>
+                {% if loop.first %}
+
+                    <div class="search_inputs">
+                        {% for w in d %}
+                            <p>{{w}}</p>
+                        {% endfor %}
+                    </div>
+                    <div class="header-bubbles">
+                        <h3>Search Results:</h3>
+                    </div>
+
+                    <table class="table">
+                        <tr>
+                            <th>Rank</th>
+                            <th>Title</th>
+                            <th>Score</th>
+                            <th>Summary</th>
+                            <th>Streaming</th>
+                        </tr>
+                {% else %}
+                        <tr>
+                            {% for item in d %}
+                                {% if loop.index == 4 %}
+                                    <td class="show-read-more">{{item}}</td>
+                                {% else %}
+                                    <td>{{item}}</td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                {% endif %}
             {% endfor %}
-            {% endif %}
-        </form>
+        {% endif %}
+                    </table>
+                
         <button onclick="topFunction()" id="topbtn">Search Again</button>
+
         <script>
             function topFunction() {
                 document.body.scrollTop = 0;
