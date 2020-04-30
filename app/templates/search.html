@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="/static/bootstrap.min.css">
     <link rel="stylesheet" href="/static/main.css">
     <!-- read more button code from https://www.tutorialrepublic.com/faq/show-read-more-link-if-the-text-exceeds-a-certain-length-using-jquery.php -->
+    <link rel="icon" href="/static/images/icon.png">
     <meta charset="utf-8">
     <title>Melodic Monkey Movies</title>
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
@@ -25,13 +26,20 @@
                 $(this).remove();
             });
 
-            var curr_url = window.location.href
+            var curr_url = window.location.href;
             var elmnt = document.getElementById("results");
-            if (curr_url.includes("search1")) {
-                elmnt.classList.remove("hidden")
+            var err_cls = document.getElementById("validation")
+
+            if(curr_url.includes("search1=&") || curr_url.includes("search3=&")) {
+                elmnt.classList.add("hidden");
+                err_cls.classList.remove("hidden")
+            } else if (curr_url.includes("search1")) {
+                elmnt.classList.remove("hidden");
+                err_cls.classList.add("hidden");
                 elmnt.scrollIntoView(true);
             } else {
-                elmnt.classList.add("hidden")
+                elmnt.classList.add("hidden");
+                err_cls.classList.add("hidden");
             };
 
         });
@@ -72,8 +80,12 @@
             </div>
             <div class="form-group">
                 <input id="input" type="text" name="search4" class="form-control"
-                    placeholder="Enter a quote that reflects your mood!">
+                    placeholder="(Optional) Enter a quote that reflects your mood!">
             </div>
+            <div class="validation" id="validation">
+                <p>{{output_message}}</p>
+            </div>    
+
             <br><br>
             <button type="submit" id="submit" class="btn btn-info">Search</button>
         </form>
@@ -89,9 +101,21 @@
             {% for d in data %}
                 {% if loop.first %}
 
-                    <div class="search_inputs">
-                        {% for w in d %}
-                            <p>{{w}}</p>
+                    <div class="search-inputs">
+                        {% for rows in d %}
+                            <div class="input-rows">
+                                {% for cols in rows %}
+                                    <div class="input-cols">
+                                        {% for val in cols %}
+                                            {% if loop.previtem == "Summary: " %}
+                                            <p class="show-read-more">{{val}}</p> 
+                                            {% else %}
+                                            <p>{{val}}</p>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endfor %}
+                            </div>
                         {% endfor %}
                     </div>
                     <div class="header-bubbles">
@@ -109,7 +133,9 @@
                 {% else %}
                         <tr>
                             {% for item in d %}
-                                {% if loop.index == 4 %}
+                                {% if loop.index == 1 %}
+                                    <td class="table-center">{{item}}</td>
+                                {% elif loop.index == 4 %}
                                     <td class="show-read-more">{{item}}</td>
                                 {% else %}
                                     <td>{{item}}</td>

@@ -156,6 +156,7 @@ th {
     color: #B4E9EC;
     font-weight: bold;
     text-shadow: 1px 1px 1px black;
+    background-color: rgb(10, 170, 230, 0.7);
 }
 
 td {
@@ -177,4 +178,43 @@ td {
 
 .header-bubbles {
     text-align: center;
+}
+
+.validation {
+    text-align: center;
+    color:red;
+    font-style: italic;
+    font-size: medium;
+}
+
+.table-center {
+    text-align: center;
+}
+
+.search-inputs {
+    display:flex;
+    flex-direction: column;
+    width: 80%;
+    margin-left: 10%;
+    border-top: 1px solid white;
+    background-color: rgb(10, 170, 230, 0.5);
+}
+
+.input-rows {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px solid white;
+}
+
+.input-cols {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+}
+
+.search-inputs p {
+    padding:5px;
+    margin-bottom: 0;
 }
