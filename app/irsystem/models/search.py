@@ -31,25 +31,40 @@ def get_data(artist, song, movie, quote):
     output = []
     movie_result = find_movie(movie)
     if movie_result=='ERROR':
-        return ['We did not find the movie you searched for. Did you spell it correctly?']
+        return [['We did not find the movie you searched for. Did you spell it correctly?']]
     music_result = find_music(artist, song)
 
+    pos = neg = neu = comp = 0
+
     if song != '':
-        song_disp = 'Song: ' + music_result.title + ' by ' + music_result.artist
-        top3 = get_songs(music_result.artist)
+        artist_name = music_result.artist
+        song_disp = 'Song: ' + music_result.title + ' by ' + artist_name
+        top3 = get_songs(artist_name)
+        top3_disp = "Top 3 Songs by "+artist_name+": "
         sentiment = analyzer.polarity_scores(music_result.lyrics)
         pos = sentiment['pos']
         neg = sentiment['neg']
         neu = sentiment['neu']
         comp = sentiment['compound']
+    elif artist != '':
+        try:
+            artist_name = music_result.name
+            song_disp = 'Artist: ' + artist_name
+            top3 = get_songs(artist_name)
+            top3_disp = "Top 3 Songs by "+artist_name+": "
+            sent_list = get_artist_sentiment(artist_name)
+            pos = sent_list[0]
+            neg = sent_list[1]
+            neu = sent_list[2]
+            comp = sent_list[3]
+        except:
+            song_disp = "Could not find your Artist. Did you spell it correctly?"
+            top3 = []
+            top3_disp = "No Artist Found"
     else:
-        song_disp = 'Artist: ' + music_result.name
-        top3 = get_songs(music_result.name)
-        sent_list = get_artist_sentiment(music_result.name)
-        pos = sent_list[0]
-        neg = sent_list[1]
-        neu = sent_list[2]
-        comp = sent_list[3]
+        song_disp = "No Artist Found"
+        top3_disp = "No Artist Found"
+        top3 = []
         
     if quote != '':
         val = getquote(quote)
@@ -57,10 +72,11 @@ def get_data(artist, song, movie, quote):
         neg += val[1]
         neu += val[2]
         comp += val[3]
-        pos /= 2
-        neg /= 2
-        neu /= 2
-        comp /=2
+        if top3_disp != "No Artist Found":
+            pos /= 2
+            neg /= 2
+            neu /= 2
+            comp /=2
         quote_disp = quote
     else:
         quote_disp = "N/A"
@@ -68,12 +84,17 @@ def get_data(artist, song, movie, quote):
     pos_p = str(round(pos*100,2))
     neg_p = str(round(neg*100,2))
     neu_p = str(round(neu*100,2))
-    s1 = 'Music Sentiment: '+pos_p+'% positive, '+neg_p+'% negative, and '+neu_p+'% neutral'
-    s2 = 'Compound Sentiment: '+str(round(comp,4))+' ('+sent_type(comp)+')'
 
-    row1 = [    [song_disp],            ['Movie: '+movie_result[0]]   ]
-    row2 = [    ['Top 3 Songs: ']+top3, ['Summary: ', movie_result[1]]  ]
-    row3 = [    [s1, s2],               ['Quote: ', quote_disp]    ]
+    if top3_disp == "No Artist Found" and quote_disp == "N/A":
+        s1 = 'Please enter a Song, Artist, or Quote to get a sentiment score!'
+        s2 = ''
+    else:
+        s1 = 'Search Sentiment: '+pos_p+'% positive, '+neg_p+'% negative, and '+neu_p+'% neutral'
+        s2 = 'Compound Sentiment: '+str(round(comp,4))+' ('+sent_type(comp)+')'
+
+    row1 = [    [song_disp],        ['Movie: '+movie_result[0]]     ]
+    row2 = [    [top3_disp]+top3,   ['Summary: ', movie_result[1]]  ]
+    row3 = [    [s1, s2],           ['Quote: ', quote_disp]         ]
     output = [row1, row2, row3]
 
     dists = get_sent_dist(comp)
@@ -164,7 +185,8 @@ def get_songs(artist):
     top3_lst = []
     i = 1
     for x in result.songs:
-        top3_lst.append('    '+str(i) + '. ' + x.title)
+        song_str = '    \t'+str(i)+'. '+x.title
+        top3_lst.append(song_str)
         i += 1
     return top3_lst
 

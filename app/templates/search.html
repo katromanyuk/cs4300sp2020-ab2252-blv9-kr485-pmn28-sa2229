@@ -17,10 +17,11 @@
                     var newStr = myStr.substring(0, maxLength);
                     var removedStr = myStr.substring(maxLength, $.trim(myStr).length);
                     $(this).empty().html(newStr);
-                    $(this).append(' <a href="javascript:void(0);" class="read-more">read more...</a>');
+                    $(this).append('<a href="javascript:void(0);" class="read-more"> read more...</a>');
                     $(this).append('<span class="more-text">' + removedStr + '</span>');
                 }
             });
+
             $(".read-more").click(function () {
                 $(this).siblings(".more-text").contents().unwrap();
                 $(this).remove();
@@ -30,10 +31,10 @@
             var elmnt = document.getElementById("results");
             var err_cls = document.getElementById("validation")
 
-            if(curr_url.includes("search1=&") || curr_url.includes("search3=&")) {
+            if(curr_url.includes("movie=&")) {
                 elmnt.classList.add("hidden");
                 err_cls.classList.remove("hidden")
-            } else if (curr_url.includes("search1")) {
+            } else if (curr_url.includes("artist=")) {
                 elmnt.classList.remove("hidden");
                 err_cls.classList.add("hidden");
                 elmnt.scrollIntoView(true);
@@ -65,21 +66,21 @@
             <br><br>
 
             <div class="form-group">
-                <input id="input" type="text" name="search1" class="form-control"
-                    placeholder="Enter an artist you like">
+                <input id="input" type="text" name="artist" class="form-control"
+                    placeholder="(Optional) Enter an artist you like">
             </div>
 
             <div class="form-group">
-                <input id="input" type="text" name="search2" class="form-control"
+                <input id="input" type="text" name="song" class="form-control"
                     placeholder="(Optional) Enter a song by this artist">
             </div>
 
             <div class="form-group">
-                <input id="input" type="text" name="search3" class="form-control"
+                <input id="input" type="text" name="movie" class="form-control"
                     placeholder="Enter the title of a movie you like" required>
             </div>
             <div class="form-group">
-                <input id="input" type="text" name="search4" class="form-control"
+                <input id="input" type="text" name="quote" class="form-control"
                     placeholder="(Optional) Enter a quote that reflects your mood!">
             </div>
             <div class="validation" id="validation">
@@ -118,6 +119,7 @@
                             </div>
                         {% endfor %}
                     </div>
+                    <button onclick="topFunction()" id="topbtn">Search Again</button>
                     <div class="header-bubbles">
                         <h3>Search Results:</h3>
                     </div>

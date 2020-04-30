@@ -10,11 +10,11 @@ net_id = "Amber Baez: ab2252, Betsy Vasquez Valerio: blv9, " \
 
 @irsystem.route('/', methods=['GET'])
 def search():
-    artist = request.args.get('search1')
-    song = request.args.get('search2')
-    movie = request.args.get('search3')
-    quote = request.args.get('search4')
-    output_message = 'Please give us at least an artist and movie!'
+    artist = request.args.get('artist')
+    song = request.args.get('song')
+    movie = request.args.get('movie')
+    quote = request.args.get('quote')
+    output_message = 'Please enter a movie to get results!'
     if not movie:
         data = []
     else:
