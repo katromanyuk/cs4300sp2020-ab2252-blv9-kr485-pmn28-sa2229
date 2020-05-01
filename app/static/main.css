@@ -1,5 +1,5 @@
 html {
-    font-family: futura;
+    font-family: Futura;
 }
 
 @media (min-width: 1200px) {
@@ -121,15 +121,109 @@ color: #4285F4;
     text-shadow: 1px 1px 2px black;
     color:white;
     border-radius: 20px;
+    margin-top:40px;
 }
 
 #topbtn:hover {
     background-color: #B4E9EC;
 }
 
-.lower h1 {
+.lower h1, h3 {
     background-color: rgb(10, 170, 230, 0.7);
     border-radius: 20px;
     padding:10px;
     text-shadow: 2px 2px 5px black;
+    text-align: center;
+    font-style: italic;
+    color:#B4E9EC;
+    display: inline-block
+}
+
+.table {
+    border:3px solid white;
+    color: #B4E9EC;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin-left: 10%;
+    margin-right: 10%;
+    width:auto;
+    margin-bottom:40px;
+}
+
+th {
+    text-align: center;
+    vertical-align: middle;
+    border:1px solid white;
+    color: #B4E9EC;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px black;
+    background-color: rgb(10, 170, 230, 0.7);
+}
+
+td {
+    color: white;
+    border: 1px solid white;
+}
+
+tr:nth-child(odd) {
+    background-color: rgb(0, 0, 128, 0.7);
+}
+
+tr:nth-child(even) {
+    background-color:rgb(0, 128, 0, 0.7);
+}
+
+.read-more {
+    color:#B4E9EC;
+}
+
+.read-more:hover {
+    color:white;
+}
+
+.hidden {
+    display:none;
+}
+
+.header-bubbles {
+    text-align: center;
+}
+
+.validation {
+    text-align: center;
+    color:red;
+    font-style: italic;
+    font-size: medium;
+}
+
+.table-center {
+    text-align: center;
+}
+
+.search-inputs {
+    display:flex;
+    flex-direction: column;
+    width: 80%;
+    margin-left: 10%;
+    border-top: 1px solid white;
+    background-color: rgb(10, 170, 230, 0.5);
+}
+
+.input-rows {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px solid white;
+}
+
+.input-cols {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+}
+
+.search-inputs p {
+    padding:5px;
+    margin-bottom: 0;
 }

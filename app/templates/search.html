@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="/static/bootstrap.min.css">
     <link rel="stylesheet" href="/static/main.css">
     <!-- read more button code from https://www.tutorialrepublic.com/faq/show-read-more-link-if-the-text-exceeds-a-certain-length-using-jquery.php -->
+    <link rel="icon" href="/static/images/icon.png">
     <meta charset="utf-8">
     <title>Melodic Monkey Movies</title>
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
@@ -16,14 +17,32 @@
                     var newStr = myStr.substring(0, maxLength);
                     var removedStr = myStr.substring(maxLength, $.trim(myStr).length);
                     $(this).empty().html(newStr);
-                    $(this).append(' <a href="javascript:void(0);" class="read-more">read more...</a>');
+                    $(this).append('<a href="javascript:void(0);" class="read-more"> read more...</a>');
                     $(this).append('<span class="more-text">' + removedStr + '</span>');
                 }
             });
+
             $(".read-more").click(function () {
                 $(this).siblings(".more-text").contents().unwrap();
                 $(this).remove();
             });
+
+            var curr_url = window.location.href;
+            var elmnt = document.getElementById("results");
+            var err_cls = document.getElementById("validation")
+
+            if(curr_url.includes("movie=&")) {
+                elmnt.classList.add("hidden");
+                err_cls.classList.remove("hidden")
+            } else if (curr_url.includes("artist=")) {
+                elmnt.classList.remove("hidden");
+                err_cls.classList.add("hidden");
+                elmnt.scrollIntoView(true);
+            } else {
+                elmnt.classList.add("hidden");
+                err_cls.classList.add("hidden");
+            };
+
         });
     </script>
     <style>
@@ -45,42 +64,93 @@
             </h1>
 
             <br><br>
-            <!-- Add responsive feedback for required fields -->
-            <!-- form validation using python: render_template value testing inputs -->
+
             <div class="form-group">
-                <input id="input" type="text" name="search1" class="form-control"
-                    placeholder="Enter an artist you like">
+                <input id="input" type="text" name="artist" class="form-control"
+                    placeholder="(Optional) Enter an artist you like">
             </div>
 
             <div class="form-group">
-                <input id="input" type="text" name="search2" class="form-control"
+                <input id="input" type="text" name="song" class="form-control"
                     placeholder="(Optional) Enter a song by this artist">
             </div>
 
             <div class="form-group">
-                <input id="input" type="text" name="search3" class="form-control"
+                <input id="input" type="text" name="movie" class="form-control"
                     placeholder="Enter the title of a movie you like" required>
             </div>
             <div class="form-group">
-                <input id="input" type="text" name="search4" class="form-control"
-                    placeholder="Enter a quote that reflects your mood!">
+                <input id="input" type="text" name="quote" class="form-control"
+                    placeholder="(Optional) Enter a quote that reflects your mood!">
             </div>
+            <div class="validation" id="validation">
+                <p>{{output_message}}</p>
+            </div>    
+
             <br><br>
             <button type="submit" id="submit" class="btn btn-info">Search</button>
         </form>
     </section>
 
     <section class="lower" id="results">
-        <form class="form-inline global-search">
-            {% if data %}
-            <h1 style="font-size: 32px; font-family:Futura; color: #B4E9EC">{{output_message}}</h1>
+        <div class="header-bubbles">
+            <h1>Your Search:</h1>
+        </div>
+        <br>
+
+        {% if data %}
             {% for d in data %}
-            <br>
-            <p class="show-read-more" ; p style="font-size: 18px; color:white;">{{d}}</p>
+                {% if loop.first %}
+
+                    <div class="search-inputs">
+                        {% for rows in d %}
+                            <div class="input-rows">
+                                {% for cols in rows %}
+                                    <div class="input-cols">
+                                        {% for val in cols %}
+                                            {% if loop.previtem == "Summary: " %}
+                                            <p class="show-read-more">{{val}}</p> 
+                                            {% else %}
+                                            <p>{{val}}</p>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button onclick="topFunction()" id="topbtn">Search Again</button>
+                    <div class="header-bubbles">
+                        <h3>Search Results:</h3>
+                    </div>
+
+                    <table class="table">
+                        <tr>
+                            <th>Rank</th>
+                            <th>Title</th>
+                            <th>Score</th>
+                            <th>Summary</th>
+                            <th>Streaming</th>
+                        </tr>
+                {% else %}
+                        <tr>
+                            {% for item in d %}
+                                {% if loop.index == 1 %}
+                                    <td class="table-center">{{item}}</td>
+                                {% elif loop.index == 4 %}
+                                    <td class="show-read-more">{{item}}</td>
+                                {% else %}
+                                    <td>{{item}}</td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                {% endif %}
             {% endfor %}
-            {% endif %}
-        </form>
+        {% endif %}
+                    </table>
+                
         <button onclick="topFunction()" id="topbtn">Search Again</button>
+
         <script>
             function topFunction() {
                 document.body.scrollTop = 0;

@@ -31,8 +31,86 @@ def get_data(artist, song, movie, quote):
     output = []
     movie_result = find_movie(movie)
     if movie_result=='ERROR':
+        return [['We did not find the movie you searched for. Did you spell it correctly?']]
+    music_result = find_music(artist, song)
+
+    pos = neg = neu = comp = 0
+
+    if song != '':
+        artist_name = music_result.artist
+        song_disp = 'Song: ' + music_result.title + ' by ' + artist_name
+        top3 = get_songs(artist_name)
+        top3_disp = "Top 3 Songs by "+artist_name+": "
+        sentiment = analyzer.polarity_scores(music_result.lyrics)
+        pos = sentiment['pos']
+        neg = sentiment['neg']
+        neu = sentiment['neu']
+        comp = sentiment['compound']
+    elif artist != '':
+        try:
+            artist_name = music_result.name
+            song_disp = 'Artist: ' + artist_name
+            top3 = get_songs(artist_name)
+            top3_disp = "Top 3 Songs by "+artist_name+": "
+            sent_list = get_artist_sentiment(artist_name)
+            pos = sent_list[0]
+            neg = sent_list[1]
+            neu = sent_list[2]
+            comp = sent_list[3]
+        except:
+            song_disp = "Could not find your Artist. Did you spell it correctly?"
+            top3 = []
+            top3_disp = "No Artist Found"
+    else:
+        song_disp = "No Artist Found"
+        top3_disp = "No Artist Found"
+        top3 = []
+        
+    if quote != '':
+        val = getquote(quote)
+        pos += val[0]
+        neg += val[1]
+        neu += val[2]
+        comp += val[3]
+        if top3_disp != "No Artist Found":
+            pos /= 2
+            neg /= 2
+            neu /= 2
+            comp /=2
+        quote_disp = quote
+    else:
+        quote_disp = "N/A"
+
+    pos_p = str(round(pos*100,2))
+    neg_p = str(round(neg*100,2))
+    neu_p = str(round(neu*100,2))
+
+    if top3_disp == "No Artist Found" and quote_disp == "N/A":
+        s1 = 'Please enter a Song, Artist, or Quote to get a sentiment score!'
+        s2 = ''
+    else:
+        s1 = 'Search Sentiment: '+pos_p+'% positive, '+neg_p+'% negative, and '+neu_p+'% neutral'
+        s2 = 'Compound Sentiment: '+str(round(comp,4))+' ('+sent_type(comp)+')'
+
+    row1 = [    [song_disp],        ['Movie: '+movie_result[0]]     ]
+    row2 = [    [top3_disp]+top3,   ['Summary: ', movie_result[1]]  ]
+    row3 = [    [s1, s2],           ['Quote: ', quote_disp]         ]
+    output = [row1, row2, row3]
+
+    dists = get_sent_dist(comp)
+    scores = get_scores(movie_result[1], dists)
+    ten = print_ten(movie_result[0],scores)
+    output = [output] + ten
+    return output
+
+
+def placeholder_function(artist, song, movie, quote):
+    output = []
+    movie_result = find_movie(movie)
+    if movie_result=='ERROR':
         return ['We did not find the movie you searched for. Did you spell it correctly?']
     music_result = find_music(artist, song)
+
     if song != '' and artist != '':
         output.append('Song: '+music_result.title+' by '+music_result.artist)
         sentiment = analyzer.polarity_scores(music_result.lyrics)
@@ -78,9 +156,6 @@ def get_data(artist, song, movie, quote):
         neu += val[2]
         comp += val[3]
 
-
-
-
     #listify(movies)
     output.append('----------------')
     pos_p = str(round(pos*100,2))
@@ -96,14 +171,41 @@ def get_data(artist, song, movie, quote):
     output.append('Movie: ' + movie_result[0])
     output.append('Summary: ')
     output.append(movie_result[1])
-    output.append('----------------')
-    output.append('Your Movie Recommendations Are:')
+    # output.append('----------------')
+    # output.append('Your Movie Recommendations Are:')
     #dists = get_sent_dist(pos,neg)
     dists = get_sent_dist(comp)
     scores = get_scores(movie_result[1], dists)
     ten = print_ten(movie_result[0],scores)
-    output = output + ten
+    output = [output] + ten
     return output
+
+def get_songs(artist):
+    result = genius.search_artist(artist, max_songs=3)
+    top3_lst = []
+    i = 1
+    for x in result.songs:
+        song_str = '    \t'+str(i)+'. '+x.title
+        top3_lst.append(song_str)
+        i += 1
+    return top3_lst
+
+def get_artist_sentiment(artist):
+    result = genius.search_artist(artist, max_songs=3)
+    pos = neg = neu = comp = 0
+    i = 1
+    for x in result.songs:
+        sentiment = analyzer.polarity_scores(x.lyrics)
+        pos += sentiment['pos']
+        neg += sentiment['neg']
+        neu += sentiment['neu']
+        comp += sentiment['compound']
+        i += 1
+    pos = pos/3
+    neg = neg/3
+    neu = neu/3
+    comp = comp/3
+    return [pos, neg, neu, comp]
 
 
 def find_music(artist= '', song=''):
@@ -164,18 +266,18 @@ def response(result):
     return text.find('True') > -1
 
 
-def listify(df):
-    genres = []
-    languages = []
-    countries = []
-    for x,y,z in zip(df['Genres'],df['Languages'],df['Countries']):
-        g = re.findall(': \"(.*?)\"', x)
-        l = re.findall(': \"(.*?)\"', y)
-        c = re.findall(': \"(.*?)\"', z)
-        genres.append(g)
-        languages.append(l)
-        countries.append(c)
-    df['Genres'] = genres
+# def listify(df):
+#     genres = []
+#     languages = []
+#     countries = []
+#     for x,y,z in zip(df['Genres'],df['Languages'],df['Countries']):
+#         g = re.findall(': \"(.*?)\"', x)
+#         l = re.findall(': \"(.*?)\"', y)
+#         c = re.findall(': \"(.*?)\"', z)
+#         genres.append(g)
+#         languages.append(l)
+#         countries.append(c)
+#     df['Genres'] = genres
     #df['Languages'] = languages
     #df['Countries'] = countries
 
@@ -250,14 +352,15 @@ def print_ten(movie,results):
     ten = []
     i = 1
     for (score,ind) in results:
+        entry = []
         if movies['Title'][ind] != movie:
-            ten.append(str(i)+'.')
-            ten.append(movies['Title'][ind])
-            ten.append('Score: '+str(score))
-            ten.append('Summary: ')
-            ten.append(movies['Summary'][ind])#[:400]+'...')
-            ten.append('Streaming Services: ' + (movies['Streaming Services'][ind]))
+            entry.append(str(i)+'.')
+            entry.append(movies['Title'][ind])
+            entry.append(str(round(score, 4)))
+            entry.append(movies['Summary'][ind])#[:400]+'...')
+            entry.append(movies['Streaming Services'][ind])
             i+=1
+        ten.append(entry)
     return ten
 
 
