@@ -93,15 +93,15 @@ def get_data(artist, song, movie, quote, amazon, disney, hbo, hulu, netflix):
     neg_p = str(round(neg*100,2))
     neu_p = str(round(neu*100,2))
 
-    s1 = 'Search Sentiment: '+pos_p+'% positive, '+neg_p+'% negative, and '+neu_p+'% neutral'
+    s1 = 'Sentiment Breakdown: '+pos_p+'% positive, '+neg_p+'% negative, and '+neu_p+'% neutral'
     s2 = 'Compound Sentiment: '+str(round(comp,4))+' ('+sent_type(comp)+')'
 
     stream_list = get_stream_list(amazon,disney,hbo,hulu,netflix)
 
     row1 = [    [song_disp],        ['Movie: '+movie_result[0]]     ]
     row2 = [    [top3_disp]+top3,   ['Summary: ', movie_result[1]]  ]
-    row3 = [    ['Quote: ', quote_disp], ['Selected Streaming Services: ', stream_list]  ]
-    row4 = [[s1, s2]]
+    row3 = [    [s1], ['Selected Streaming Services: ', stream_list]  ]
+    row4 = [[s2], ['Quote: ', quote_disp]]
     output = [row1, row2, row3, row4]
 
     dists = get_sent_dist(comp)
@@ -124,7 +124,11 @@ def get_stream_list(amazon, disney, hbo, hulu, netflix):
         streaming.append('Hulu')
     if netflix=='1':
         streaming.append('Netflix')
-    return (', '.join(streaming))
+    if len(streaming)>0:
+        result = (', '.join(streaming))
+    else:
+        result = 'N/A'
+    return result
 
 
 def get_stream_scores(amazon, disney, hbo, hulu, netflix):
@@ -220,7 +224,7 @@ def cleanjson(result):
     poster = result[result.find("Poster")+9:result.find("Ratings")-3]
     try:
         review_imdb = float(result[result.find(
-        '"Internet Movie Database","Value":"')+35:result.find('Source":"Rotten Tomatoes"')-8])
+        "imdbRating")+13:result.find("imdbVotes")-3])
     except:
         review_imdb = "N/A"
     try:
@@ -252,11 +256,11 @@ def get_scores(query,dists,stream,just_mov):
     dists = np.asarray(dists)
     ratings = get_ratings()
     if just_mov:
-        total_scores = (2*scores+.075*dists+.02*ratings+.05*stream)
+        total_scores = (2*scores+.075*dists+.01*ratings+.05*stream)
     else:
-        total_scores = (2*scores+.15*dists+.02*ratings+.05*stream)
+        total_scores = (2*scores+.15*dists+.01*ratings+.05*stream)
     result = sorted(tuple(zip(total_scores, docs)),reverse=True)
-    return result[:16]
+    return result[:15]
 
 
 def sent_type(sent):
@@ -292,7 +296,7 @@ def get_sent_dist(comp):
 
 def get_ratings():
     ratings = np.asarray(movies['Rating'])
-    ratings = ratings-5*np.ones(len(ratings))
+    #ratings = ratings-5*np.ones(len(ratings))
     return ratings
 
 
@@ -304,7 +308,10 @@ def print_ten(movie,results):
         if movies['Title'][ind] != movie:
             title = movies['Title'][ind]
             movie_result = find_movie(title)
-            summ = movie_result[1]
+            if (movie_result[1]) == 'N/A':
+                summ = movies['Summary'][ind]
+            else:
+                summ = movie_result[1]
             rate = movie_result[2]
             poster = movie_result[4]
             entry.append(str(i)+'.')
