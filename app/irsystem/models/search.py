@@ -258,9 +258,9 @@ def get_scores(query,dists,stream,just_mov):
     dists = np.asarray(dists)
     ratings = np.asarray(movies['Rating'])
     if just_mov:
-        total_scores = (1.7*scores+.05*dists+.03*ratings+.1*stream)
+        total_scores = (1.4*scores+.04*dists+.03*ratings+.08*stream)
     else:
-        total_scores = (1.7*scores+.12*dists+.03*ratings+.1*stream)
+        total_scores = (1.4*scores+.09*dists+.03*ratings+.08*stream)
     result = sorted(tuple(zip(total_scores, docs)),reverse=True)
     return result[:15]
 
