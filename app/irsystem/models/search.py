@@ -254,7 +254,7 @@ def get_scores(query,dists,stream,just_mov):
     else:
         total_scores = (2*scores+.15*dists+.02*ratings+.05*stream)
     result = sorted(tuple(zip(total_scores, docs)),reverse=True)
-    return result[:15]
+    return result[:16]
 
 
 def sent_type(sent):
