@@ -11,10 +11,6 @@ net_id = "Amber Baez: ab2252, Betsy Vasquez Valerio: blv9, " \
 def go_to_about():
     return render_template('about.html')
 
-@irsystem.route('/about', methods=['GET'])
-def about():
-    return render_template('about.html')
-
 @irsystem.route('/', methods=['GET'])
 def search():
     artist = request.args.get('artist')
