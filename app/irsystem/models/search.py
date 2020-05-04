@@ -32,6 +32,7 @@ def get_data(artist, song, movie, quote, amazon, disney, hbo, hulu, netflix):
     movie_result = find_movie(movie)
     if movie_result=='ERROR':
         return [['We did not find the movie you searched for. Did you spell it correctly?']]
+    just_mov = False
     music_result = find_music(artist, song)
 
     pos = neg = neu = comp = 0
@@ -211,17 +212,18 @@ def find_movie(movie):
         plot = json[1]
         title = json[0]
         review_imdb = json[2]
-        review_rotten = json[3]
+        res_type = json[3]
         poster = json[4]
     else:
         return "ERROR"
-    return (title, plot, review_imdb, review_rotten, poster)
+    return (title, plot, review_imdb, res_type, poster)
 
 
 def cleanjson(result):
     title = result[result.find("Title")+8:result.find("Year")-3]
     plot = result[result.find("Plot")+7:result.find("Language")-3]
     poster = result[result.find("Poster")+9:result.find("Ratings")-3]
+    res_type = result[result.find("Type")+7:result.find("Type")+12]
     try:
         review_imdb = float(result[result.find(
         "imdbRating")+13:result.find("imdbVotes")-3])
@@ -232,7 +234,7 @@ def cleanjson(result):
         'Source":"Rotten Tomatoes","Value":')+35: result.find('},{"Source":"Metacritic"')-2])
     except:
         review_rotten = "N/A"
-    return [title, plot, review_imdb, review_rotten, poster]
+    return [title, plot, review_imdb, res_type, poster]
 
 
 def response(result):
@@ -256,7 +258,7 @@ def get_scores(query,dists,stream,just_mov):
     dists = np.asarray(dists)
     ratings = np.asarray(movies['Rating'])
     if just_mov:
-        total_scores = (1.7*scores+.06*dists+.03*ratings+.1*stream)
+        total_scores = (1.7*scores+.05*dists+.03*ratings+.1*stream)
     else:
         total_scores = (1.7*scores+.12*dists+.03*ratings+.1*stream)
     result = sorted(tuple(zip(total_scores, docs)),reverse=True)
@@ -311,8 +313,9 @@ def print_ten(movie,results):
             rate = movies['Rating'][ind]
             if rate==0:
                 rate='N/A'
-            if movie_result!='ERROR':
+            if movie_result!='ERROR' and movie_result[3]=='movie':
                 summ = movie_result[1]
+                #summ = movies['Summary'][ind]
                 summ = summ.replace('\\','')
                 poster = movie_result[4]
             else:

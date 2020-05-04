@@ -7,6 +7,13 @@ project_name = "Melodic Monkeys: Movie Recommendations Based on Music Preference
 net_id = "Amber Baez: ab2252, Betsy Vasquez Valerio: blv9, " \
     "Kateryna Romanyuk: kr485, Patrick Neafsey: pmn28, Shilpy Agarwal: sa2229"
 
+@irsystem.route('/about.html')
+def go_to_about():
+    return render_template('about.html')
+
+@irsystem.route('/about', methods=['GET'])
+def about():
+    return render_template('about.html')
 
 @irsystem.route('/', methods=['GET'])
 def search():
