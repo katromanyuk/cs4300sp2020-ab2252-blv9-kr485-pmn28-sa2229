@@ -4,13 +4,12 @@
 </head>
 <body style="background-color:#dce9f5;">
     <form class="form-inline global-search">
-        <h1 style="text-align: center; font-size: 44px; font-family:Futura; padding-bottom:5%">
+        <h1 style="text-align: center; font-size: 44px; font-family:Futura;">
             <a href="/">Melodic Monkey Movies</a>
         </h1>
-        <br>
     </form>
     <div class="container full-width" style="text-align: center;">
-        <div class="feature-item" style="border-color:black;font-size: 18px;border-style: solid; margin-bottom: 10px;">
+        <div class="feature-item" style="border-color:#dce9f5;font-size: 18px;border-style: solid; margin-bottom: 10px; margin-left: 100px; margin-right: 100px;">
         <p style= "font-size: 12px">Created By: Shilpy Agarwal, Amber Baez, Patrick Neafsey, Kateryna Romanyuk, Betsy Vasquez Valerio</pstyle=><br>
             <br><h4 style= "font-size: 24px">About Melodic Monkey Movies</h4>
             <p>
@@ -33,13 +32,13 @@
                 of the movie. 
                 For a song input, sentiment is computed using the lyrics of the song. For just an artist input, sentiment is computed using the 
                 lyrics from the artist's 3 most listened to songs. For a quote, the sentiment is computed using the text of the quote. 
-                If both a music and quote input is provided, the sompute sentiment is the average of the two.
-                The overall score is then computed via a weighted average of the similarities between the plot of the inputted movie and 
-                the plots of the movies in the application database, and the similarity between the computed sentiment score (as described 
-                above) and the sentiments of the movie plots in the application database. As before, movie ratings are incroporated into 
+                If both a music and quote input is provided, the computed sentiment is the average of the two.
+                The overall score for each outputted movie is then computed via a weighted average of similarity to the inputted movie plot 
+                and similarity to the sentiment score, as described above.
+                As before, movie ratings are incroporated into 
                 the scores in order to give an additional boost to highly ranked movies.
                 <br><br>
-                If the user chooses to select the streaming services they have, a boost is given to the scores of the outputted movies 
+                If the user chooses to select the streaming services they have, a boost is given to the scores of the suggested movies 
                 if they are available on any of the selected platforms. However, movies that are not available on the user's selected 
                 platforms are not filtered out, and therefore may still be suggested if they otherwise have very high similarity scores 
                 to the user's input(s).
