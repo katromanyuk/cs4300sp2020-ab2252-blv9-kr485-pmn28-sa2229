@@ -208,25 +208,27 @@ def find_movie(movie):
         title = json[0]
         review_imdb = json[2]
         review_rotten = json[3]
+        poster = json[4]
     else:
         return "ERROR"
-    return (title, plot, review_imdb, review_rotten)
+    return (title, plot, review_imdb, review_rotten, poster)
 
 
 def cleanjson(result):
     title = result[result.find("Title")+8:result.find("Year")-3]
     plot = result[result.find("Plot")+7:result.find("Language")-3]
+    poster = result[result.find("Poster")+9:result.find("Ratings")-3]
     try:
         review_imdb = float(result[result.find(
         '"Internet Movie Database","Value":"')+35:result.find('Source":"Rotten Tomatoes"')-8])
     except:
-        review_imdb = -1
+        review_imdb = "N/A"
     try:
         review_rotten = float(result[result.find(
         'Source":"Rotten Tomatoes","Value":')+35: result.find('},{"Source":"Metacritic"')-2])
     except:
-        review_rotten = -1
-    return [title, plot, review_imdb, review_rotten]
+        review_rotten = "N/A"
+    return [title, plot, review_imdb, review_rotten, poster]
 
 
 def response(result):
@@ -300,11 +302,19 @@ def print_ten(movie,results):
     for (score,ind) in results:
         entry = []
         if movies['Title'][ind] != movie:
+            title = movies['Title'][ind]
+            movie_result = find_movie(title)
+            summ = movie_result[1]
+            rate = movie_result[2]
+            poster = movie_result[4]
             entry.append(str(i)+'.')
-            entry.append(movies['Title'][ind])
+            entry.append(title)
+            entry.append(poster)
             entry.append(str(round(score, 4)))
-            entry.append(movies['Summary'][ind])#[:400]+'...')
+            entry.append(summ)
+            #entry.append(movies['Summary'][ind])
             entry.append(movies['Streaming Services'][ind])
+            entry.append(rate)
             i+=1
         ten.append(entry)
     return ten
