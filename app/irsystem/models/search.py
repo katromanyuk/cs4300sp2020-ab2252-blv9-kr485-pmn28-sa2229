@@ -27,7 +27,7 @@ inv_idx = np.load('app/inv_idx.npy',allow_pickle='TRUE').item()
 idf = {x: math.log2(n_mov/(1+len(inv_idx[x]))) for x in inv_idx if len(inv_idx[x])>=20 and len(inv_idx[x])/n_mov<=0.8}
 
 
-def get_data(artist, song, movie, quote):
+def get_data(artist, song, movie, quote, amazon, disney, hbo, hulu, netflix):
     output = []
     movie_result = find_movie(movie)
     if movie_result=='ERROR':
@@ -62,10 +62,10 @@ def get_data(artist, song, movie, quote):
             top3 = []
             top3_disp = "No Artist Found"
     else:
-        song_disp = "No Artist Found"
+        song_disp = "No Song Found"
         top3_disp = "No Artist Found"
         top3 = []
-        
+
     if quote != '':
         val = getquote(quote)
         pos += val[0]
@@ -81,104 +81,70 @@ def get_data(artist, song, movie, quote):
     else:
         quote_disp = "N/A"
 
+    if top3_disp == "No Artist Found" and quote_disp == "N/A":
+        just_mov = True
+        mov_sent = analyzer.polarity_scores(movie_result[1])
+        pos = mov_sent['pos']
+        neg = mov_sent['neg']
+        neu = mov_sent['neu']
+        comp = mov_sent['compound']
+
     pos_p = str(round(pos*100,2))
     neg_p = str(round(neg*100,2))
     neu_p = str(round(neu*100,2))
 
-    if top3_disp == "No Artist Found" and quote_disp == "N/A":
-        s1 = 'Please enter a Song, Artist, or Quote to get a sentiment score!'
-        s2 = ''
-    else:
-        s1 = 'Search Sentiment: '+pos_p+'% positive, '+neg_p+'% negative, and '+neu_p+'% neutral'
-        s2 = 'Compound Sentiment: '+str(round(comp,4))+' ('+sent_type(comp)+')'
+    s1 = 'Search Sentiment: '+pos_p+'% positive, '+neg_p+'% negative, and '+neu_p+'% neutral'
+    s2 = 'Compound Sentiment: '+str(round(comp,4))+' ('+sent_type(comp)+')'
+
+    stream_list = get_stream_list(amazon,disney,hbo,hulu,netflix)
 
     row1 = [    [song_disp],        ['Movie: '+movie_result[0]]     ]
     row2 = [    [top3_disp]+top3,   ['Summary: ', movie_result[1]]  ]
-    row3 = [    [s1, s2],           ['Quote: ', quote_disp]         ]
-    output = [row1, row2, row3]
+    row3 = [    ['Quote: ', quote_disp], ['Selected Streaming Services: ', stream_list]  ]
+    row4 = [[s1, s2]]
+    output = [row1, row2, row3, row4]
 
     dists = get_sent_dist(comp)
-    scores = get_scores(movie_result[1], dists)
+    stream = get_stream_scores(amazon,disney,hbo,hulu,netflix)
+    scores = get_scores(movie_result[1],dists,stream,just_mov)
     ten = print_ten(movie_result[0],scores)
     output = [output] + ten
     return output
 
 
-def placeholder_function(artist, song, movie, quote):
-    output = []
-    movie_result = find_movie(movie)
-    if movie_result=='ERROR':
-        return ['We did not find the movie you searched for. Did you spell it correctly?']
-    music_result = find_music(artist, song)
+def get_stream_list(amazon, disney, hbo, hulu, netflix):
+    streaming = []
+    if amazon=='1':
+        streaming.append('Amazon')
+    if disney=='1':
+        streaming.append('Disney')
+    if hbo=='1':
+        streaming.append('HBO')
+    if hulu=='1':
+        streaming.append('Hulu')
+    if netflix=='1':
+        streaming.append('Netflix')
+    return (', '.join(streaming))
 
-    if song != '' and artist != '':
-        output.append('Song: '+music_result.title+' by '+music_result.artist)
-        sentiment = analyzer.polarity_scores(music_result.lyrics)
-        pos = sentiment['pos']
-        neg = sentiment['neg']
-        neu = sentiment['neu']
-        comp = sentiment['compound']
-    elif artist!='':
-        output.append('Artist: '+music_result.name)
-        output.append('----------------')
-        output.append('Top 3 Songs for this artist:')
-        i = 1
-        pos = neg = neu = comp = 0
-        for x in music_result.songs:
-            output.append(str(i) + '. ' + x.title)
-            sentiment = analyzer.polarity_scores(x.lyrics)
-            pos += sentiment['pos']
-            neg += sentiment['neg']
-            neu += sentiment['neu']
-            comp += sentiment['compound']
-            i += 1
-        pos = pos/3
-        neg = neg/3
-        neu = neu/3
-        comp = comp/3
-    elif song!='':
-        output.append('Song: '+music_result.title+' by '+music_result.artist)
-        sentiment = analyzer.polarity_scores(music_result.lyrics)
-        pos = sentiment['pos']
-        neg = sentiment['neg']
-        neu = sentiment['neu']
-        comp = sentiment['compound']
+
+def get_stream_scores(amazon, disney, hbo, hulu, netflix):
+    streaming = []
+    if amazon=='1':
+        streaming.append(movies['Amazon'])
+    if disney=='1':
+        streaming.append(movies['Disney'])
+    if hbo=='1':
+        streaming.append(movies['HBO'])
+    if hulu=='1':
+        streaming.append(movies['Hulu'])
+    if netflix=='1':
+        streaming.append(movies['Netflix'])
+    if len(streaming)>0:
+        scores = np.amax(np.asarray(streaming), axis=0)
     else:
-        pos = 0
-        neg = 0
-        neu = 0
-        comp = 0
-    
-    if quote != '':
-        val = getquote(quote)
-        pos += val[0]
-        neg += val[1]
-        neu += val[2]
-        comp += val[3]
+        scores = np.zeros(n_mov)
+    return scores
 
-    #listify(movies)
-    output.append('----------------')
-    pos_p = str(round(pos*100,2))
-    neg_p = str(round(neg*100,2))
-    neu_p = str(round(neu*100,2))
-    s1 = 'Your music choice is '+pos_p+'% positive, '+neg_p+'% negative, and '\
-    +neu_p+'% neutral'
-    s2 = 'Your music choice has a compound sentiment of '+str(round(comp,4))\
-    +' ('+sent_type(comp)+')'
-    output.append(s1)
-    output.append(s2)
-    output.append('----------------')
-    output.append('Movie: ' + movie_result[0])
-    output.append('Summary: ')
-    output.append(movie_result[1])
-    # output.append('----------------')
-    # output.append('Your Movie Recommendations Are:')
-    #dists = get_sent_dist(pos,neg)
-    dists = get_sent_dist(comp)
-    scores = get_scores(movie_result[1], dists)
-    ten = print_ten(movie_result[0],scores)
-    output = [output] + ten
-    return output
 
 def get_songs(artist):
     result = genius.search_artist(artist, max_songs=3)
@@ -189,6 +155,7 @@ def get_songs(artist):
         top3_lst.append(song_str)
         i += 1
     return top3_lst
+
 
 def get_artist_sentiment(artist):
     result = genius.search_artist(artist, max_songs=3)
@@ -218,6 +185,7 @@ def find_music(artist= '', song=''):
     else:
         result = ''
     return result
+
 
 def getquote(quote= ''):
     sentiment = analyzer.polarity_scores(quote)
@@ -266,23 +234,7 @@ def response(result):
     return text.find('True') > -1
 
 
-# def listify(df):
-#     genres = []
-#     languages = []
-#     countries = []
-#     for x,y,z in zip(df['Genres'],df['Languages'],df['Countries']):
-#         g = re.findall(': \"(.*?)\"', x)
-#         l = re.findall(': \"(.*?)\"', y)
-#         c = re.findall(': \"(.*?)\"', z)
-#         genres.append(g)
-#         languages.append(l)
-#         countries.append(c)
-#     df['Genres'] = genres
-    #df['Languages'] = languages
-    #df['Countries'] = countries
-
-
-def get_scores(query,dists):
+def get_scores(query,dists,stream,just_mov):
     scores = np.zeros(len(norms))
     docs = [i for i in range(len(norms))]
     q = query.lower()
@@ -297,10 +249,12 @@ def get_scores(query,dists):
     scores = np.asarray([score/q_norm for score in scores])
     dists = np.asarray(dists)
     ratings = get_ratings()
-    total_scores = (2*scores+.15*dists+.02*ratings)
-    #total_scores = (2.5*scores+1*dists)
+    if just_mov:
+        total_scores = (2*scores+.075*dists+.02*ratings+.05*stream)
+    else:
+        total_scores = (2*scores+.15*dists+.02*ratings+.05*stream)
     result = sorted(tuple(zip(total_scores, docs)),reverse=True)
-    return result[:10]
+    return result[:15]
 
 
 def sent_type(sent):
@@ -324,14 +278,6 @@ def sent_type(sent):
     else:
         res = 'extremely positive'
     return res
-
-
-'''def get_sent_dist(p1, n1):
-    dists = []
-    for p2,n2 in tuple(zip(movies['pos'], movies['neg'])):
-        dists.append(math.sqrt((p2 - p1)**2 + (n2 - n1)**2))
-    dists = max(dists)*np.ones(len(dists))-dists
-    return dists'''
 
 
 def get_sent_dist(comp):
@@ -362,14 +308,3 @@ def print_ten(movie,results):
             i+=1
         ten.append(entry)
     return ten
-
-
-'''inv_idx = pd.read_csv('app/inv_idx.csv')
-inv_idx.columns = ['word','docs','counts']
-z = tuple(zip(inv_idx['word'],inv_idx['docs']))
-idf = {a: math.log2(n_mov/(1+len(b))) for (a,b) in z if len(b)>=20 and len(b)/n_mov<=0.8}
-word_to_index = {word:i for i, word in enumerate(inv_idx['word'])}
-docs = [d.strip('[]').split(', ') for d in inv_idx['docs']]
-inv_idx['docs'] = docs
-counts = [c.strip('[]').split(', ') for c in inv_idx['counts']]
-inv_idx['counts'] = counts'''

@@ -14,9 +14,14 @@ def search():
     song = request.args.get('song')
     movie = request.args.get('movie')
     quote = request.args.get('quote')
+    amazon = request.args.get('amazon')
+    disney = request.args.get('disney')
+    hbo = request.args.get('hbo')
+    hulu = request.args.get('hulu')
+    netflix = request.args.get('netflix')
     output_message = 'Please enter a movie to get results!'
     if not movie:
         data = []
     else:
-        data = get_data(artist, song, movie, quote)
+        data = get_data(artist, song, movie, quote, amazon, disney, hbo, hulu, netflix)
     return render_template('search.html', name=project_name, netid=net_id, output_message=output_message, data=data)

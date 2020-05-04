@@ -1,4 +1,4 @@
-<html lang="en">
+﻿<html lang="en">
 
 <head>
     <link rel="stylesheet" href="/static/bootstrap.min.css">
@@ -60,32 +60,48 @@
         </div>
         <form class="form-inline global-search" id="searchForm" novalidate>
             <h1 style="font-size: 55px; font-family:Futura; color: #B4E9EC">
-                Melodic Monkeys Movies
+                Melodic Monkey Movies
             </h1>
 
-            <br><br>
+            <br>
+
+
+            <div class="form-group">
+                <input id="input" type="text" name="movie" class="form-control"
+                       placeholder="Enter the title of a movie you like" required>
+            </div>
 
             <div class="form-group">
                 <input id="input" type="text" name="artist" class="form-control"
-                    placeholder="(Optional) Enter an artist you like">
+                       placeholder="(Optional) Enter an artist you like">
             </div>
 
             <div class="form-group">
                 <input id="input" type="text" name="song" class="form-control"
-                    placeholder="(Optional) Enter a song by this artist">
+                       placeholder="(Optional) Enter a song by this artist">
             </div>
 
             <div class="form-group">
-                <input id="input" type="text" name="movie" class="form-control"
-                    placeholder="Enter the title of a movie you like" required>
-            </div>
-            <div class="form-group">
                 <input id="input" type="text" name="quote" class="form-control"
-                    placeholder="(Optional) Enter a quote that reflects your mood!">
+                       placeholder="(Optional) Enter a quote that reflects your mood!">
             </div>
+
+            <br><br>
+            <p style="font-size:16px; color: #FFFFFF">(Optional) Select which streaming services you have</p><br>
+            <input type="checkbox" id="Amazon" name="amazon" value=1>
+            <label style="font-size: 16px; color: #FFFFFF" for="Amazon">Amazon&emsp;</label>
+            <input type="checkbox" id="Disney" name="disney" value=1>
+            <label style="font-size: 16px; color: #FFFFFF" for="Disney">Disney+&emsp;</label>
+            <input type="checkbox" id="HBO" name="hbo" value=1>
+            <label style="font-size: 16px; color: #FFFFFF" for="HBO">HBO&emsp;</label>
+            <input type="checkbox" id="Hulu" name="hulu" value=1>
+            <label style="font-size: 16px; color: #FFFFFF" for="Hulu">Hulu&emsp;</label>
+            <input type="checkbox" id="Netflix" name="netflix" value=1>
+            <label style="font-size: 16px; color: #FFFFFF" for="Netflix">Netflix&emsp;</label><br><br>
+
             <div class="validation" id="validation">
                 <p>{{output_message}}</p>
-            </div>    
+            </div>
 
             <br><br>
             <button type="submit" id="submit" class="btn btn-info">Search</button>
