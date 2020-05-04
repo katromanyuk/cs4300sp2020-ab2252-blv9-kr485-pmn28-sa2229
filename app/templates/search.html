@@ -10,7 +10,7 @@
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script>
         $(document).ready(function () {
-            var maxLength = 300;
+            var maxLength = 200;
             $(".show-read-more").each(function () {
                 var myStr = $(this).text();
                 if ($.trim(myStr).length > maxLength) {
@@ -144,16 +144,20 @@
                         <tr>
                             <th>Rank</th>
                             <th>Title</th>
+                            <th>Poster</th>
                             <th>Score</th>
                             <th>Summary</th>
                             <th>Streaming</th>
+                            <th>IMDB Rating</th>
                         </tr>
                 {% else %}
                         <tr>
                             {% for item in d %}
                                 {% if loop.index == 1 %}
                                     <td class="table-center">{{item}}</td>
-                                {% elif loop.index == 4 %}
+                                {% elif loop.index == 3 %}
+                                    <td><img src={{item}} style="height:150px; width:100px"></td>
+                                {% elif loop.index == 5 %}
                                     <td class="show-read-more">{{item}}</td>
                                 {% else %}
                                     <td>{{item}}</td>
