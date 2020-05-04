@@ -312,6 +312,7 @@ def print_ten(movie,results):
                 summ = movies['Summary'][ind]
             else:
                 summ = movie_result[1]
+            summ = summ.replace('\\','')
             rate = movie_result[2]
             poster = movie_result[4]
             entry.append(str(i)+'.')
@@ -319,7 +320,6 @@ def print_ten(movie,results):
             entry.append(poster)
             entry.append(str(round(score, 4)))
             entry.append(summ)
-            #entry.append(movies['Summary'][ind])
             entry.append(movies['Streaming Services'][ind])
             entry.append(rate)
             i+=1
