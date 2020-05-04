@@ -254,11 +254,11 @@ def get_scores(query,dists,stream,just_mov):
     q_norm = math.sqrt(q_norm_sq)
     scores = np.asarray([score/q_norm for score in scores])
     dists = np.asarray(dists)
-    ratings = get_ratings()
+    ratings = np.asarray(movies['Rating'])
     if just_mov:
-        total_scores = (2*scores+.07*dists+.01*ratings+.07*stream)
+        total_scores = (1.7*scores+.06*dists+.03*ratings+.1*stream)
     else:
-        total_scores = (2*scores+.15*dists+.01*ratings+.07*stream)
+        total_scores = (1.7*scores+.12*dists+.03*ratings+.1*stream)
     result = sorted(tuple(zip(total_scores, docs)),reverse=True)
     return result[:15]
 
@@ -308,12 +308,16 @@ def print_ten(movie,results):
         if movies['Title'][ind] != movie:
             title = movies['Title'][ind]
             movie_result = find_movie(title)
-            summ = movie_result[1]
-            if summ == 'N/A':
+            rate = movies['Rating'][ind]
+            if rate==0:
+                rate='N/A'
+            if movie_result!='ERROR':
+                summ = movie_result[1]
+                summ = summ.replace('\\','')
+                poster = movie_result[4]
+            else:
                 summ = movies['Summary'][ind]
-            summ = summ.replace('\\','')
-            rate = movie_result[2]
-            poster = movie_result[4]
+                poster = ''
             entry.append(str(i)+'.')
             entry.append(title)
             entry.append(poster)
