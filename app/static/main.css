@@ -34,7 +34,7 @@ margin-bottom:0;
 .topcorner{
 position:absolute;
 top:7px;
-left:5px;
+right:5px;
 font-size: small;
 font-style: italic;
 }
@@ -152,7 +152,7 @@ color: #4285F4;
 
 th {
     text-align: center;
-    vertical-align: middle;
+    vertical-align: middle !important;
     border:1px solid white;
     color: #B4E9EC;
     font-weight: bold;
@@ -226,4 +226,36 @@ tr:nth-child(even) {
 .search-inputs p {
     padding:5px;
     margin-bottom: 0;
+}
+
+.indented {
+    margin-left:30px;
+    padding-top:0 !important;
+}
+
+.about {
+    padding-top:0;
+}
+
+.full-width {
+    text-align:justify;
+}
+
+.feature-item {
+    border-color:#dce9f5;
+    font-size: 18px;
+    border-style: solid; 
+    margin-bottom: 10px; 
+    margin-left: 50px; 
+    margin-right: 50px;
+}
+
+.about-title {
+    text-align: center; 
+    font-size: 44px; 
+    font-family:Futura;
+}
+
+.about-title:hover {
+    color:black;
 }

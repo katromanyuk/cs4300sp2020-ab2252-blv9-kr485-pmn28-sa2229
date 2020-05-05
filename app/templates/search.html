@@ -88,7 +88,7 @@
                 </div>
 
                 <br><br>
-                <p style="font-size:16px; color: #FFFFFF">(Optional) Select which streaming services you have</p><br>
+                <p style="font-size:16px; color: #FFFFFF">(Optional) Select your streaming services:</p><br>
                 <input type="checkbox" id="Amazon" name="amazon" value=1>
                 <label style="font-size: 16px; color: #FFFFFF" for="Amazon">Amazon&emsp;</label>
                 <input type="checkbox" id="Disney" name="disney" value=1>
@@ -126,7 +126,9 @@
                     <div class="input-cols">
                         {% for val in cols %}
                         {% if loop.previtem == "Summary: " %}
-                        <p class="show-read-more">{{val}}</p>
+                        <p class="show-read-more indented">{{val}}</p>
+                        {% elif loop.index > 1 %}
+                        <p class="indented">{{val}}</p>
                         {% else %}
                         <p>{{val}}</p>
                         {% endif %}
@@ -154,14 +156,14 @@
                 {% else %}
                 <tr>
                     {% for item in d %}
-                    {% if loop.index == 1 %}
-                    <td class="table-center">{{item}}</td>
+                    {% if loop.index == 2 %}
+                    <td>{{item}}</td>
                     {% elif loop.index == 3 %}
                     <td><img src={{item}} style="height:150px; width:100px"></td>
                     {% elif loop.index == 5 %}
                     <td class="show-read-more">{{item}}</td>
                     {% else %}
-                    <td>{{item}}</td>
+                    <td class="table-center">{{item}}</td>
                     {% endif %}
                     {% endfor %}
                 </tr>

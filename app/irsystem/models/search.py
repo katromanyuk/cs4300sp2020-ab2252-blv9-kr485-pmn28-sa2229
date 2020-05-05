@@ -94,15 +94,15 @@ def get_data(artist, song, movie, quote, amazon, disney, hbo, hulu, netflix):
     neg_p = str(round(neg*100,2))
     neu_p = str(round(neu*100,2))
 
-    s1 = 'Sentiment Breakdown: '+pos_p+'% positive, '+neg_p+'% negative, and '+neu_p+'% neutral'
-    s2 = 'Compound Sentiment: '+str(round(comp,4))+' ('+sent_type(comp)+')'
+    s1 = pos_p+'% Positive, '+neg_p+'% Negative, and '+neu_p+'% Neutral'
+    s2 = ''+str(round(comp,4))+' ('+sent_type(comp)+')'
 
     stream_list = get_stream_list(amazon,disney,hbo,hulu,netflix)
 
     row1 = [    [song_disp],        ['Movie: '+movie_result[0]]     ]
     row2 = [    [top3_disp]+top3,   ['Summary: ', movie_result[1]]  ]
-    row3 = [    [s1], ['Selected Streaming Services: ', stream_list]  ]
-    row4 = [[s2], ['Quote: ', quote_disp]]
+    row3 = [    ['Sentiment Breakdown:', s1], ['Selected Streaming Services: ', stream_list]  ]
+    row4 = [    ['Compound Sentiment:', s2], ['Quote: ', quote_disp]]
     output = [row1, row2, row3, row4]
 
     dists = get_sent_dist(comp)
@@ -329,5 +329,6 @@ def print_ten(movie,results):
             entry.append(movies['Streaming Services'][ind])
             entry.append(rate)
             i+=1
-        ten.append(entry)
+        if len(entry)>0:
+            ten.append(entry)
     return ten
