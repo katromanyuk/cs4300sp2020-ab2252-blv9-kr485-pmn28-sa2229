@@ -3,7 +3,6 @@
 <head>
     <link rel="stylesheet" href="/static/bootstrap.min.css">
     <link rel="stylesheet" href="/static/main.css">
-    <!-- read more button code from https://www.tutorialrepublic.com/faq/show-read-more-link-if-the-text-exceeds-a-certain-length-using-jquery.php -->
     <link rel="icon" href="/static/images/icon.png">
     <meta charset="utf-8">
     <title>Melodic Monkey Movies</title>
@@ -19,25 +18,25 @@
                     $(this).empty().html(newStr);
                     $(this).append('<a href="javascript:void(0);" class="read-more"> read more...</a>');
                     $(this).append('<span class="more-text">' + removedStr + '</span>');
-                    $(this).append('<span class="more-text">' + '<a href="javascript:void(0);" class="read-less"> read less</a>' + '</span>');
+                    $(this).append('<span class="more-text">' + ' <a href="javascript:void(0);" class="read-less">read less</a>' + '</span>');
                 }
             });
 
-            $(".read-more").click(function () {
+            $(".show-read-more").on("click", ".read-more", function() {
                 $(this).siblings(".more-text").contents().unwrap();
                 $(this).remove();
-            });
+            })
 
-            $(".read-less").click(function () {
+            $(".show-read-more").on("click", ".read-less", function() {
                 var parentElt = $(this).parent();
+                $(this).remove();
                 var myStr = parentElt.text();
                 var newStr = myStr.substring(0, maxLength);
                 var removedStr = myStr.substring(maxLength, $.trim(myStr).length);
-                $(this).remove();
                 parentElt.empty().html(newStr);
                 parentElt.append('<a href="javascript:void(0);" class="read-more"> read more...</a>');
                 parentElt.append('<span class="more-text">' + removedStr + '</span>');
-                parentElt.append('<span class="more-text">' + '<a href="javascript:void(0);" class="read-less"> read less</a>' + '</span>');
+                parentElt.append('<span class="more-text">' + ' <a href="javascript:void(0);" class="read-less">read less</a>' + '</span>');
             });
 
             var curr_url = window.location.href;
@@ -55,7 +54,6 @@
                 elmnt.classList.add("hidden");
                 err_cls.classList.add("hidden");
             };
-
         });
     </script>
     <style>
@@ -66,136 +64,132 @@
 </head>
 
 <body>
-            <section class="upper">
-            <div class="topcorner">
-                <!--<p>Project Name: {{ name }}</p>-->
-                <!--<p>Student Names: ({{ netid }})</p>-->
-                <p style="font-size:24px; font-family:Arial; color: #FFFFFF"><a href="/about.html">About Us</a></p>
-            </div>
-            <form class="form-inline global-search" id="searchForm" novalidate>
-                <h1 style="font-size: 55px; font-family:Futura; color: #B4E9EC">
-                    Melodic Monkey Movies
-                </h1>
+    <section class="upper">
+        <div class="topcorner">
+            <p style="font-size:24px; font-family:Arial; color: #FFFFFF"><a href="/about.html">About Us</a></p>
+        </div>
+        <form class="form-inline global-search" id="searchForm" novalidate>
+            <h1 style="font-size: 55px; font-family:Futura; color: #B4E9EC">
+                Melodic Monkey Movies
+            </h1>
 
-                <br>
-
-
-                <div class="form-group">
-                    <input id="input" type="text" name="movie" class="form-control"
-                           placeholder="Enter the title of a movie you like" required>
-                </div>
-
-                <div class="form-group">
-                    <input id="input" type="text" name="artist" class="form-control"
-                           placeholder="(Optional) Enter an artist you like">
-                </div>
-
-                <div class="form-group">
-                    <input id="input" type="text" name="song" class="form-control"
-                           placeholder="(Optional) Enter a song by this artist">
-                </div>
-
-                <div class="form-group">
-                    <input id="input" type="text" name="quote" class="form-control"
-                           placeholder="(Optional) Enter a quote that reflects your mood!">
-                </div>
-
-                <br><br>
-                <p style="font-size:16px; color: #FFFFFF">(Optional) Select your streaming services:</p><br>
-                <input type="checkbox" id="Amazon" name="amazon" value=1>
-                <label style="font-size: 16px; color: #FFFFFF" for="Amazon">Amazon&emsp;</label>
-                <input type="checkbox" id="Disney" name="disney" value=1>
-                <label style="font-size: 16px; color: #FFFFFF" for="Disney">Disney+&emsp;</label>
-                <input type="checkbox" id="HBO" name="hbo" value=1>
-                <label style="font-size: 16px; color: #FFFFFF" for="HBO">HBO&emsp;</label>
-                <input type="checkbox" id="Hulu" name="hulu" value=1>
-                <label style="font-size: 16px; color: #FFFFFF" for="Hulu">Hulu&emsp;</label>
-                <input type="checkbox" id="Netflix" name="netflix" value=1>
-                <label style="font-size: 16px; color: #FFFFFF" for="Netflix">Netflix&emsp;</label><br><br>
-
-                <div class="validation" id="validation">
-                    <p>{{output_message}}</p>
-                </div>
-
-                <br><br>
-                <button type="submit" id="submit" class="btn btn-info">Search</button>
-            </form>
-        </section>
-
-        <section class="lower" id="results">
-            <div class="header-bubbles">
-                <h1>Your Search:</h1>
-            </div>
             <br>
 
-            {% if data %}
-            {% for d in data %}
-            {% if loop.first %}
+            <div class="form-group">
+                <input id="input" type="text" name="movie" class="form-control"
+                        placeholder="Enter the title of a movie you like" required>
+            </div>
 
-            <div class="search-inputs">
-                {% for rows in d %}
-                <div class="input-rows">
-                    {% for cols in rows %}
-                    <div class="input-cols">
-                        {% for val in cols %}
-                        {% if loop.previtem == "Summary: " or loop.previtem == "Song Lyrics: "%}
-                        <p class="show-read-more indented">{{val}}</p>
-                        {% elif loop.index > 1 %}
-                        <p class="indented">{{val}}</p>
-                        {% else %}
-                        <p>{{val}}</p>
-                        {% endif %}
-                        {% endfor %}
-                    </div>
+            <div class="form-group">
+                <input id="input" type="text" name="artist" class="form-control"
+                        placeholder="(Optional) Enter an artist you like">
+            </div>
+
+            <div class="form-group">
+                <input id="input" type="text" name="song" class="form-control"
+                        placeholder="(Optional) Enter a song by this artist">
+            </div>
+
+            <div class="form-group">
+                <input id="input" type="text" name="quote" class="form-control"
+                        placeholder="(Optional) Enter a quote that reflects your mood!">
+            </div>
+
+            <br><br>
+            <p style="font-size:16px; color: #FFFFFF">(Optional) Select your streaming services:</p><br>
+            <input type="checkbox" id="Amazon" name="amazon" value=1>
+            <label style="font-size: 16px; color: #FFFFFF" for="Amazon">Amazon&emsp;</label>
+            <input type="checkbox" id="Disney" name="disney" value=1>
+            <label style="font-size: 16px; color: #FFFFFF" for="Disney">Disney+&emsp;</label>
+            <input type="checkbox" id="HBO" name="hbo" value=1>
+            <label style="font-size: 16px; color: #FFFFFF" for="HBO">HBO&emsp;</label>
+            <input type="checkbox" id="Hulu" name="hulu" value=1>
+            <label style="font-size: 16px; color: #FFFFFF" for="Hulu">Hulu&emsp;</label>
+            <input type="checkbox" id="Netflix" name="netflix" value=1>
+            <label style="font-size: 16px; color: #FFFFFF" for="Netflix">Netflix&emsp;</label><br><br>
+
+            <div class="validation" id="validation">
+                <p>{{output_message}}</p>
+            </div>
+
+            <br><br>
+            <button type="submit" id="submit" class="btn btn-info">Search</button>
+        </form>
+    </section>
+
+    <section class="lower" id="results">
+        <div class="header-bubbles">
+            <h1>Your Search:</h1>
+        </div>
+        <br>
+
+        {% if data %}
+        {% for d in data %}
+        {% if loop.first %}
+
+        <div class="search-inputs">
+            {% for rows in d %}
+            <div class="input-rows">
+                {% for cols in rows %}
+                <div class="input-cols">
+                    {% for val in cols %}
+                    {% if loop.previtem == "Summary: " or loop.previtem == "Song Lyrics: "%}
+                    <p class="show-read-more indented">{{val}}</p>
+                    {% elif loop.index > 1 %}
+                    <p class="indented">{{val}}</p>
+                    {% else %}
+                    <p>{{val}}</p>
+                    {% endif %}
                     {% endfor %}
                 </div>
                 {% endfor %}
             </div>
-            <button onclick="topFunction()" id="topbtn">Search Again</button>
-            <div class="header-bubbles">
-                <h3>Search Results:</h3>
-            </div>
+            {% endfor %}
+        </div>
+        <button onclick="topFunction()" id="topbtn">Search Again</button>
+        <div class="header-bubbles">
+            <h3>Search Results:</h3>
+        </div>
 
-            <table class="table">
-                <tr>
-                    <th>Rank</th>
-                    <th>Title</th>
-                    <th>Poster</th>
-                    <th>Score</th>
-                    <th>Summary</th>
-                    <th>Streaming</th>
-                    <th>IMDB Rating</th>
-                </tr>
+        <table class="table">
+            <tr>
+                <th>Rank</th>
+                <th>Title</th>
+                <th>Poster</th>
+                <th>Score</th>
+                <th>Summary</th>
+                <th>Streaming</th>
+                <th>IMDB Rating</th>
+            </tr>
+            {% else %}
+            <tr>
+                {% for item in d %}
+                {% if loop.index == 2 %}
+                <td>{{item}}</td>
+                {% elif loop.index == 3 %}
+                <td><img src="{{item}}" onerror="this.src='/static/images/poster-error.png'" alt="Poster not Available" style="height:150px; width:100px"></td>
+                {% elif loop.index == 5 %}
+                <td class="show-read-more">{{item}}</td>
                 {% else %}
-                <tr>
-                    {% for item in d %}
-                    {% if loop.index == 2 %}
-                    <td>{{item}}</td>
-                    {% elif loop.index == 3 %}
-                    <td><img src="{{item}}" onerror="this.src='/static/images/poster-error.png'" alt="Poster not Available" style="height:150px; width:100px"></td>
-                    {% elif loop.index == 5 %}
-                    <td class="show-read-more">{{item}}</td>
-                    {% else %}
-                    <td class="table-center">{{item}}</td>
-                    {% endif %}
-                    {% endfor %}
-                </tr>
+                <td class="table-center">{{item}}</td>
                 {% endif %}
                 {% endfor %}
-                {% endif %}
-            </table>
+            </tr>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+        </table>
 
-            <button onclick="topFunction()" id="topbtn">Search Again</button>
+        <button onclick="topFunction()" id="topbtn">Search Again</button>
 
-            <script>
-                function topFunction() {
-                    document.body.scrollTop = 0;
-                    document.documentElement.scrollTop = 0;
-                }
-            </script>
-
-        </section>
-
+        <script>
+            function topFunction() {
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
+            }
+        </script>
+        
+    </section>
 </body>
 
 </html>
