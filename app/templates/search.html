@@ -19,12 +19,25 @@
                     $(this).empty().html(newStr);
                     $(this).append('<a href="javascript:void(0);" class="read-more"> read more...</a>');
                     $(this).append('<span class="more-text">' + removedStr + '</span>');
+                    $(this).append('<span class="more-text">' + '<a href="javascript:void(0);" class="read-less"> read less</a>' + '</span>');
                 }
             });
 
             $(".read-more").click(function () {
                 $(this).siblings(".more-text").contents().unwrap();
                 $(this).remove();
+            });
+
+            $(".read-less").click(function () {
+                var parentElt = $(this).parent();
+                var myStr = parentElt.text();
+                var newStr = myStr.substring(0, maxLength);
+                var removedStr = myStr.substring(maxLength, $.trim(myStr).length);
+                $(this).remove();
+                parentElt.empty().html(newStr);
+                parentElt.append('<a href="javascript:void(0);" class="read-more"> read more...</a>');
+                parentElt.append('<span class="more-text">' + removedStr + '</span>');
+                parentElt.append('<span class="more-text">' + '<a href="javascript:void(0);" class="read-less"> read less</a>' + '</span>');
             });
 
             var curr_url = window.location.href;

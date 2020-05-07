@@ -173,11 +173,11 @@ tr:nth-child(even) {
     background-color:rgb(0, 128, 0, 0.7);
 }
 
-.read-more {
+.read-more, .read-less {
     color:#B4E9EC;
 }
 
-.read-more:hover {
+.read-more:hover, .read-less:hover {
     color:white;
 }
 
