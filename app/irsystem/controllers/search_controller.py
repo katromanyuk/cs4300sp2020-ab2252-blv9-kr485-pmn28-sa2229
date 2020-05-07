@@ -25,6 +25,9 @@ def search():
     output_message = 'Please enter a movie to get results!'
     if not movie:
         data = []
+    elif find_movie(movie)=='ERROR':
+        output_message = 'We did not find the movie you searched for. Did you spell it correctly?'
+        data = []
     else:
         data = get_data(artist, song, movie, quote, amazon, disney, hbo, hulu, netflix)
     return render_template('search.html', name=project_name, netid=net_id, output_message=output_message, data=data)

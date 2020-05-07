@@ -169,6 +169,10 @@
                 </tr>
                 {% endif %}
                 {% endfor %}
+                {% else %}
+                <div class="validation" id="validation">
+                    <p>{{output_message}}</p>
+                </div>
                 {% endif %}
             </table>
 

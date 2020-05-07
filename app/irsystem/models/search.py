@@ -30,8 +30,8 @@ idf = {x: math.log2(n_mov/(1+len(inv_idx[x]))) for x in inv_idx if len(inv_idx[x
 def get_data(artist, song, movie, quote, amazon, disney, hbo, hulu, netflix):
     output = []
     movie_result = find_movie(movie)
-    if movie_result=='ERROR':
-        return [['We did not find the movie you searched for. Did you spell it correctly?']]
+    #if movie_result=='ERROR':
+    #    return ['We did not find the movie you searched for. Did you spell it correctly?']
     just_mov = False
     music_result = find_music(artist, song)
 
@@ -101,8 +101,8 @@ def get_data(artist, song, movie, quote, amazon, disney, hbo, hulu, netflix):
 
     row1 = [    [song_disp],        ['Movie: '+movie_result[0]]     ]
     row2 = [    [top3_disp]+top3,   ['Summary: ', movie_result[1]]  ]
-    row3 = [    ['Sentiment Breakdown:', s1], ['Selected Streaming Services: ', stream_list]  ]
-    row4 = [    ['Compound Sentiment:', s2], ['Quote: ', quote_disp]]
+    row3 = [    ['Sentiment Breakdown:', s1], ['Quote: ', quote_disp]  ]
+    row4 = [    ['Compound Sentiment:', s2], ['Selected Streaming Services: ', stream_list]]
     output = [row1, row2, row3, row4]
 
     dists = get_sent_dist(comp)
@@ -310,17 +310,20 @@ def print_ten(movie,results):
         if movies['Title'][ind] != movie:
             title = movies['Title'][ind]
             movie_result = find_movie(title)
-            rate = movies['Rating'][ind]
-            if rate==0:
-                rate='N/A'
             if movie_result!='ERROR' and movie_result[3]=='movie':
                 summ = movie_result[1]
+                if summ=='N/A':
+                    summ = movies['Summary'][ind]
                 #summ = movies['Summary'][ind]
-                summ = summ.replace('\\','')
                 poster = movie_result[4]
+                rate = movie_result[2]
             else:
                 summ = movies['Summary'][ind]
                 poster = ''
+                rate = movies['Rating'][ind]
+            summ = summ.replace('\\','')
+            if rate==0:
+                rate='N/A'
             entry.append(str(i)+'.')
             entry.append(title)
             entry.append(poster)
