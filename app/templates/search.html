@@ -138,7 +138,7 @@
                     {% for cols in rows %}
                     <div class="input-cols">
                         {% for val in cols %}
-                        {% if loop.previtem == "Summary: " %}
+                        {% if loop.previtem == "Summary: " or loop.previtem == "Song Lyrics: "%}
                         <p class="show-read-more indented">{{val}}</p>
                         {% elif loop.index > 1 %}
                         <p class="indented">{{val}}</p>
