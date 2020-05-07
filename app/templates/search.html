@@ -10,7 +10,7 @@
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script>
         $(document).ready(function () {
-            var maxLength = 300;
+            var maxLength = 220;
             $(".show-read-more").each(function () {
                 var myStr = $(this).text();
                 if ($.trim(myStr).length > maxLength) {
@@ -127,8 +127,6 @@
                         {% for val in cols %}
                         {% if loop.previtem == "Summary: " %}
                         <p class="show-read-more indented">{{val}}</p>
-                        {% elif loop.previtem == "Song Lyrics: " %}
-                        <p class="show-read-more indented">{{val}}</p>
                         {% elif loop.index > 1 %}
                         <p class="indented">{{val}}</p>
                         {% else %}
@@ -161,7 +159,7 @@
                     {% if loop.index == 2 %}
                     <td>{{item}}</td>
                     {% elif loop.index == 3 %}
-                    <td><img src={{item}} style="height:150px; width:100px"></td>
+                    <td><img src={{item}} onerror="this.src='/static/images/poster-error.png'" alt="Poster not Available" style="height:150px; width:100px"></td>
                     {% elif loop.index == 5 %}
                     <td class="show-read-more">{{item}}</td>
                     {% else %}
@@ -171,10 +169,6 @@
                 </tr>
                 {% endif %}
                 {% endfor %}
-                {% else %}
-                <div class="validation" id="validation">
-                    <p>{{output_message}}</p>
-                </div>
                 {% endif %}
             </table>
 
