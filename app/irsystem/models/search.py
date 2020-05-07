@@ -37,32 +37,35 @@ def get_data(artist, song, movie, quote, amazon, disney, hbo, hulu, netflix):
 
     pos = neg = neu = comp = 0
 
-    if song != '':
-        artist_name = music_result.artist
-        song_disp = 'Song: ' + music_result.title + ' by ' + artist_name
-        top3 = get_songs(artist_name)
-        top3_disp = "Top 3 Songs by "+artist_name+": "
-        sentiment = analyzer.polarity_scores(music_result.lyrics)
-        pos = sentiment['pos']
-        neg = sentiment['neg']
-        neu = sentiment['neu']
-        comp = sentiment['compound']
-    elif artist != '':
-        try:
+    try:
+        if music_result == 'ERROR':
+            song_disp = "No Song Found"
+            top3_disp = "No Artist Found"
+            top3 = []
+        elif song != '':
+            artist_name = music_result.artist
+            song_disp = 'Song: ' + music_result.title + ' by ' + artist_name
+            #top3 = get_songs(artist_name)
+            #top3_disp = "Top 3 Songs by "+artist_name+": "
+            top3_disp = "Song Lyrics: "
+            top3 = [music_result.lyrics]
+            #top3 = music_result.lyrics.split('\n')[:7]
+            sentiment = analyzer.polarity_scores(music_result.lyrics)
+            pos = sentiment['pos']
+            neg = sentiment['neg']
+            neu = sentiment['neu']
+            comp = sentiment['compound']
+        elif artist != '':
             artist_name = music_result.name
             song_disp = 'Artist: ' + artist_name
-            top3 = get_songs(artist_name)
+            top3 = get_songs(music_result)
             top3_disp = "Top 3 Songs by "+artist_name+": "
-            sent_list = get_artist_sentiment(artist_name)
+            sent_list = get_artist_sentiment(music_result)
             pos = sent_list[0]
             neg = sent_list[1]
             neu = sent_list[2]
             comp = sent_list[3]
-        except:
-            song_disp = "Could not find your Artist. Did you spell it correctly?"
-            top3 = []
-            top3_disp = "No Artist Found"
-    else:
+    except:
         song_disp = "No Song Found"
         top3_disp = "No Artist Found"
         top3 = []
@@ -151,8 +154,7 @@ def get_stream_scores(amazon, disney, hbo, hulu, netflix):
     return scores
 
 
-def get_songs(artist):
-    result = genius.search_artist(artist, max_songs=3)
+def get_songs(result):
     top3_lst = []
     i = 1
     for x in result.songs:
@@ -162,8 +164,7 @@ def get_songs(artist):
     return top3_lst
 
 
-def get_artist_sentiment(artist):
-    result = genius.search_artist(artist, max_songs=3)
+def get_artist_sentiment(result):
     pos = neg = neu = comp = 0
     i = 1
     for x in result.songs:
@@ -181,14 +182,13 @@ def get_artist_sentiment(artist):
 
 
 def find_music(artist= '', song=''):
+    result = 'ERROR'
     if song != '' and artist!='':
         result = genius.search_song(song, artist)
     elif artist != '':
         result = genius.search_artist(artist, max_songs=3)
     elif song!= '':
         result = genius.search_song(song)
-    else:
-        result = ''
     return result
 
 
@@ -201,11 +201,11 @@ def getquote(quote= ''):
     return [pos, neg, neu, comp]
 
 
-def find_movie(movie):
+def find_movie(movie, plot_len='full'):
     title = ""
     plot = ""
     query = "http://www.omdbapi.com/?apikey=" + omdb_TOKEN + "&t=" + movie
-    params = {"r": "json", "plot": "full"}
+    params = {"r": "json", "plot": plot_len}
     result = requests.get(query, params)
     if response(result.text):
         json = cleanjson(result.text)
@@ -309,7 +309,7 @@ def print_ten(movie,results):
         entry = []
         if movies['Title'][ind] != movie:
             title = movies['Title'][ind]
-            movie_result = find_movie(title)
+            movie_result = find_movie(title, 'short')
             if movie_result!='ERROR' and movie_result[3]=='movie':
                 summ = movie_result[1]
                 if summ=='N/A':
@@ -320,7 +320,7 @@ def print_ten(movie,results):
             else:
                 summ = movies['Summary'][ind]
                 poster = ''
-                rate = movies['Rating'][ind]
+                rate = 'N/A'
             summ = summ.replace('\\','')
             if rate==0:
                 rate='N/A'
