@@ -54,6 +54,37 @@
                 elmnt.classList.add("hidden");
                 err_cls.classList.add("hidden");
             };
+
+            if(curr_url.includes("movie")) {
+                user_movie = curr_url.match(/movie=(.*?)&/)[1];
+                user_artist = curr_url.match(/artist=(.*?)&/)[1];
+                user_song = curr_url.match(/song=(.*?)&/)[1];
+                try {
+                    user_quote = curr_url.match(/quote=(.*?)&/)[1];
+                } catch {
+                    user_quote = curr_url.match(/quote=(.*)/)[1];
+                };
+                document.getElementById("input-movie").value = decodeURIComponent((user_movie + '').replace(/\+/g, '%20'));
+                document.getElementById("input-artist").value = decodeURIComponent((user_artist + '').replace(/\+/g, '%20'));
+                document.getElementById("input-song").value = decodeURIComponent((user_song + '').replace(/\+/g, '%20'));
+                document.getElementById("input-quote").value = decodeURIComponent((user_quote + '').replace(/\+/g, '%20'));
+
+                if(curr_url.includes("amazon")) {
+                    document.getElementById("Amazon").checked = true;
+                }
+                if(curr_url.includes("disney")) {
+                    document.getElementById("Disney").checked = true;
+                }
+                if(curr_url.includes("hbo")) {
+                    document.getElementById("HBO").checked = true;
+                }
+                if(curr_url.includes("hulu")) {
+                    document.getElementById("Hulu").checked = true;
+                }
+                if(curr_url.includes("netflix")) {
+                    document.getElementById("Netflix").checked = true;
+                }         
+            };
         });
     </script>
     <style>
@@ -68,6 +99,9 @@
         <div class="topcorner">
             <p style="font-size:24px; font-family:Arial; color: #FFFFFF"><a href="/about.html">About Us</a></p>
         </div>
+        <div class="reset" onclick="reset()">
+            <p style="font-size:24px; font-family:Arial; color: #FFFFFF"><a>Clear Search</a></p>
+        </div>
         <form class="form-inline global-search" id="searchForm" novalidate>
             <h1 style="font-size: 55px; font-family:Futura; color: #B4E9EC">
                 Melodic Monkey Movies
@@ -76,27 +110,28 @@
             <br>
 
             <div class="form-group">
-                <input id="input" type="text" name="movie" class="form-control"
+                <input id="input-movie" type="text" name="movie" class="form-control"
                         placeholder="Enter the title of a movie you like" required>
             </div>
 
             <div class="form-group">
-                <input id="input" type="text" name="artist" class="form-control"
+                <input id="input-artist" type="text" name="artist" class="form-control"
                         placeholder="(Optional) Enter an artist you like">
             </div>
 
             <div class="form-group">
-                <input id="input" type="text" name="song" class="form-control"
+                <input id="input-song" type="text" name="song" class="form-control"
                         placeholder="(Optional) Enter a song by this artist">
             </div>
 
             <div class="form-group">
-                <input id="input" type="text" name="quote" class="form-control"
+                <input id="input-quote" type="text" name="quote" class="form-control"
                         placeholder="(Optional) Enter a quote that reflects your mood!">
             </div>
 
             <br><br>
             <p style="font-size:16px; color: #FFFFFF">(Optional) Select your streaming services:</p><br>
+
             <input type="checkbox" id="Amazon" name="amazon" value=1>
             <label style="font-size: 16px; color: #FFFFFF" for="Amazon">Amazon&emsp;</label>
             <input type="checkbox" id="Disney" name="disney" value=1>
@@ -106,8 +141,16 @@
             <input type="checkbox" id="Hulu" name="hulu" value=1>
             <label style="font-size: 16px; color: #FFFFFF" for="Hulu">Hulu&emsp;</label>
             <input type="checkbox" id="Netflix" name="netflix" value=1>
-            <label style="font-size: 16px; color: #FFFFFF" for="Netflix">Netflix&emsp;</label><br><br>
+            <label style="font-size: 16px; color: #FFFFFF" for="Netflix">Netflix&emsp;</label><br>
 
+            <div class="stream-options">
+                <div class="streambtn" onclick="allStreaming()">
+                    <p><a>Select All</a></p>
+                </div>
+                <div class="streambtn" onclick="noneStreaming()">
+                    <p><a>Deselect All</a></p>
+                </div>
+            </div><br>
             <div class="validation" id="validation">
                 <p>{{output_message}}</p>
             </div>
@@ -186,6 +229,36 @@
             function topFunction() {
                 document.body.scrollTop = 0;
                 document.documentElement.scrollTop = 0;
+            };
+            function reset() {
+                document.getElementById("input-movie").value = "";
+                document.getElementById("input-artist").value = "";
+                document.getElementById("input-song").value = "";
+                document.getElementById("input-quote").value = "";
+                document.getElementById("Amazon").checked = false;
+                document.getElementById("Disney").checked = false;
+                document.getElementById("HBO").checked = false;
+                document.getElementById("Hulu").checked = false;
+                document.getElementById("Netflix").checked = false;
+                document.getElementById("validation").classList.add("hidden");
+            };
+
+            function allStreaming() {
+                document.getElementById("Amazon").checked = true;
+                document.getElementById("Disney").checked = true;
+                document.getElementById("HBO").checked = true;
+                document.getElementById("Hulu").checked = true;
+                document.getElementById("Netflix").checked = true;
+
+            }
+
+            function noneStreaming() {
+                document.getElementById("Amazon").checked = false;
+                document.getElementById("Disney").checked = false;
+                document.getElementById("HBO").checked = false;
+                document.getElementById("Hulu").checked = false;
+                document.getElementById("Netflix").checked = false;
+
             }
         </script>
         
